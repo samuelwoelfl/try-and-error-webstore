@@ -130,7 +130,9 @@
 @media (max-width: 860px) { .checkout-grid { grid-template-columns: 1fr; } }
 .checkout-grid h2 { font-size: 22px; margin: 0 0 18px; }
 .checkout-grid h2 + .form-grid { margin-bottom: 0; }
-.section-gap { margin: 36px 0 18px; }
+/* Needs to beat ".checkout-grid h2" (same 0-1-1 specificity tier) unambiguously,
+   not just win by source-order proximity. */
+.checkout-grid h2.section-gap { margin-top: 36px; }
 
 .pay-option {
   display: flex; align-items: center; gap: 14px;
@@ -200,3 +202,15 @@
 .contact-form .btn { justify-self: start; }
 
 .center-note { text-align: center; padding: 60px 0; color: var(--text-tertiary); }
+
+/* ---------- Legal pages (Impressum / Datenschutz) ---------- */
+.legal-content h2 {
+  font-family: var(--font-heading); font-weight: var(--font-heading-weight);
+  font-size: 19px; margin: 40px 0 12px;
+}
+.legal-content h2:first-child { margin-top: 0; }
+.legal-content p { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin: 0 0 14px; }
+.legal-content ul { margin: 0 0 14px; padding-left: 20px; }
+.legal-content li { font-size: 15px; line-height: 1.7; color: var(--text-secondary); margin-bottom: 6px; }
+.legal-content a { text-decoration: underline; }
+.legal-content strong { color: var(--text); font-weight: 500; }

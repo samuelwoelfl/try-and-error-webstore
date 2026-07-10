@@ -1,6 +1,7 @@
 [hidden] { display: none !important; }
 
 *, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 html, body { margin: 0; }
 body {
   background: var(--bg);

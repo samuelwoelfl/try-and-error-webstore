@@ -21,16 +21,20 @@
   background: var(--accent);
   color: #fff;
 }
-.btn--primary:hover:not(:disabled) { background: var(--accent-hover); }
-.btn--primary:active:not(:disabled) { background: var(--accent-active); }
+/* Buttons rendered as <a> tags would otherwise inherit the global a:hover color
+   rule (higher specificity than a single class) and lose their white/base text
+   color on hover — restate it explicitly here so all .btn variants behave the same
+   regardless of whether they're a <button> or an <a>. */
+.btn--primary:hover:not(:disabled) { background: var(--accent-hover); color: #fff; }
+.btn--primary:active:not(:disabled) { background: var(--accent-active); color: #fff; }
 
 .btn--outline {
   background: transparent;
   color: var(--text);
   border: 1px solid var(--border-strong);
 }
-.btn--outline:hover:not(:disabled) { border-color: var(--accent); background: rgba(34, 31, 28, 0.03); }
-.btn--outline:active:not(:disabled) { background: rgba(34, 31, 28, 0.07); }
+.btn--outline:hover:not(:disabled) { border-color: var(--accent); background: rgba(34, 31, 28, 0.03); color: var(--text); }
+.btn--outline:active:not(:disabled) { background: rgba(34, 31, 28, 0.07); color: var(--text); }
 
 .btn--block { width: 100%; }
 .btn--sm { padding: 13px 22px; font-size: 13px; letter-spacing: 0.1em; }
@@ -50,7 +54,6 @@
 
 /* ---------- Forms ---------- */
 .field { display: block; }
-.field + .field { margin-top: 16px; }
 .field__label {
   display: block;
   font-size: 11.5px;
@@ -197,7 +200,7 @@ textarea.field__input { resize: vertical; }
   color: var(--text);
   transition: border-color var(--ease-interactive), background var(--ease-interactive);
 }
-.cart-btn:hover { border-color: var(--accent); background: rgba(34, 31, 28, 0.03); }
+.cart-btn:hover { border-color: var(--accent); background: rgba(34, 31, 28, 0.03); color: var(--text); }
 .cart-btn:active { background: rgba(34, 31, 28, 0.07); transform: translateY(1px); }
 
 .site-footer {
