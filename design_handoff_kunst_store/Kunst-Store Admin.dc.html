@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Jost:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<x-import component-from-global-scope="image-slot" from="./image-slot.js"></x-import>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#F9F7F4;color:#221f1c;font-family:'Jost',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:#221f1c;text-decoration:none}
+  a:hover{color:var(--accent,#bf8a5f)}
+  input,textarea,button,select{font-family:inherit}
+  input::placeholder,textarea::placeholder{color:rgba(34,31,28,.34)}
+  ::selection{background:rgba(191,138,95,.28)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="--accent: {{ accent }}; --accent-hover: {{ accentHover }}; --head-font: {{ headFont }}; --bg: {{ bg }}; --surface: {{ surface }}; --input: {{ inputBg }}; min-height:100vh;background:var(--bg)">
+
+  <!-- ============ LOGIN ============ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div style="width:100%;max-width:400px;animation:fadeUp .5s ease both">
+      <div style="text-align:center;margin-bottom:34px">
+        <div style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:26px;letter-spacing:.02em">Try &amp; Error</div>
+        <div style="font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#8a8075;margin-top:5px">Admin · Verwaltung</div>
+      </div>
+      <div style="background:var(--surface,#fff);border:1px solid rgba(34,31,28,.1);border-radius:6px;padding:32px 30px">
+        <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:22px;margin:0 0 22px">Anmelden</h1>
+        <label style="display:block;margin-bottom:16px"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">E-Mail</span><input type="email" style="width:100%;padding:13px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="danica@atelier.de"></label>
+        <label style="display:block;margin-bottom:22px"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Passwort</span><input type="password" style="width:100%;padding:13px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="••••••••"></label>
+        <button onClick="{{ login }}" style="width:100%;padding:15px;background:var(--accent);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)">Anmelden</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;justify-content:center;margin-top:18px;font-size:12px;color:#8a8075">
+        <span>🔒</span><span>Demo-Login — Anbindung folgt. Einfach „Anmelden" klicken.</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ADMIN SHELL ============ -->
+  <sc-if value="{{ isAuthed }}">
+  <div style="display:grid;grid-template-columns:250px 1fr;min-height:100vh">
+
+    <!-- SIDEBAR -->
+    <aside style="background:var(--surface,#fff);border-right:1px solid rgba(34,31,28,.1);display:flex;flex-direction:column;padding:26px 18px">
+      <div style="padding:6px 10px 24px">
+        <div style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:19px">Try &amp; Error</div>
+        <div style="font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#8a8075;margin-top:4px">Admin</div>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:4px">
+        <span onClick="{{ goWorks }}" style="{{ navWorksStyle }}"><span style="font-size:14px">◇</span>Werke</span>
+        <span onClick="{{ goContent }}" style="{{ navContentStyle }}"><span style="font-size:14px">✎</span>Inhalte</span>
+      </nav>
+      <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;padding-top:20px;border-top:1px solid rgba(34,31,28,.08)">
+        <a href="Kunst-Store.dc.html" target="_blank" style="display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:13px;color:#4a453f">Store ansehen ↗</a>
+        <span onClick="{{ logout }}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;font-size:13px;color:#4a453f;cursor:pointer" style-hover="color:var(--accent)">Abmelden</span>
+      </div>
+    </aside>
+
+    <!-- CONTENT AREA -->
+    <div style="position:relative;overflow-y:auto;max-height:100vh">
+
+      <!-- flash -->
+      <sc-if value="{{ flash }}"><div style="position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:9px;padding:12px 32px;background:color-mix(in srgb, var(--accent) 12%, #fff);border-bottom:1px solid color-mix(in srgb, var(--accent) 30%, #fff);font-size:13.5px;color:#4a453f">✓ Änderungen gespeichert</div></sc-if>
+
+      <!-- ===== WERKE LIST ===== -->
+      <sc-if value="{{ isWorks }}">
+      <div style="padding:38px 40px;animation:fadeUp .35s ease both">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:30px">
+          <div>
+            <div style="font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:#8a8075;margin-bottom:9px">Verwaltung</div>
+            <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:34px;margin:0;line-height:1">Werke</h1>
+          </div>
+          <button onClick="{{ newWork }}" style="display:inline-flex;align-items:center;gap:9px;padding:13px 22px;background:var(--accent);color:#fff;border:none;border-radius:2px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)">+ Neues Werk</button>
+        </div>
+
+        <div style="background:var(--surface,#fff);border:1px solid rgba(34,31,28,.1);border-radius:6px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:64px 1.6fr 1.4fr .8fr .9fr 96px;gap:16px;align-items:center;padding:14px 22px;border-bottom:1px solid rgba(34,31,28,.1);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8a8075">
+            <span></span><span>Titel</span><span>Technik</span><span>Preis</span><span>Status</span><span style="text-align:right">Aktion</span>
+          </div>
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="5">
+            <div style="display:grid;grid-template-columns:64px 1.6fr 1.4fr .8fr .9fr 96px;gap:16px;align-items:center;padding:14px 22px;border-bottom:1px solid rgba(34,31,28,.07)">
+              <div style="width:44px;height:56px;background:repeating-linear-gradient(135deg,#ebe3d7 0,#ebe3d7 7px,#e5dccd 7px,#e5dccd 14px);border-radius:2px"></div>
+              <div>
+                <div style="font-family:var(--head-font,'Spectral',serif);font-size:17px">{{ r.title }}</div>
+                <div style="font-size:12px;color:#8a8075;margin-top:2px">{{ r.meta }}</div>
+              </div>
+              <span style="font-size:14px;color:#4a453f">{{ r.technique }}</span>
+              <span style="font-size:14px">{{ r.priceLabel }}</span>
+              <span onClick="{{ r.toggle }}" style="{{ r.statusStyle }}">{{ r.statusLabel }}</span>
+              <div style="display:flex;gap:14px;justify-content:flex-end">
+                <span onClick="{{ r.edit }}" style="cursor:pointer;font-size:12.5px;color:var(--accent)" style-hover="text-decoration:underline">Bearb.</span>
+                <span onClick="{{ r.del }}" style="cursor:pointer;font-size:12.5px;color:#b06a5f" style-hover="text-decoration:underline">Löschen</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== WORK EDITOR ===== -->
+      <sc-if value="{{ isEdit }}">
+      <div style="padding:38px 40px;max-width:860px;animation:fadeUp .35s ease both">
+        <span onClick="{{ cancelEdit }}" style="cursor:pointer;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075" style-hover="color:var(--accent)">← Zurück zu Werke</span>
+        <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:30px;margin:16px 0 28px">{{ editTitle }}</h1>
+
+        <div style="display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start">
+          <!-- image -->
+          <div>
+            <span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:9px">Werkbild</span>
+            <div style="aspect-ratio:4/5;border:1.5px dashed rgba(34,31,28,.25);border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:var(--input,#faf8f5);cursor:pointer;text-align:center;padding:16px" style-hover="border-color:var(--accent)">
+              <span style="font-size:24px;color:#b3a794">⤢</span>
+              <span style="font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.08em;color:#9a8f80;line-height:1.5">Bild hierher ziehen<br>oder klicken</span>
+            </div>
+          </div>
+          <!-- fields -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Titel</span><input value="{{ draft.title }}" onChange="{{ onTitle }}" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="z.B. Morgennebel"></label>
+
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Art</span>
+              <select value="{{ draft.kind }}" onChange="{{ onKind }}" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;cursor:pointer">
+                <option value="unique">Unikat (1×)</option>
+                <option value="edition">Edition (mehrfach)</option>
+              </select>
+            </label>
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Status</span>
+              <select value="{{ draft.status }}" onChange="{{ onStatus }}" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;cursor:pointer">
+                <option value="verfügbar">Verfügbar</option>
+                <option value="verkauft">Verkauft</option>
+              </select>
+            </label>
+
+            <label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Technik</span><input value="{{ draft.technique }}" onChange="{{ onTech }}" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="z.B. Öl auf Leinwand"></label>
+
+            <sc-if value="{{ draftIsEdition }}"><label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Auflage</span><input value="{{ draft.edition }}" onChange="{{ onEdition }}" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="z.B. Edition von 50"></label></sc-if>
+
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Breite (cm)</span><input value="{{ draft.w }}" onChange="{{ onW }}" type="number" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="80"></label>
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Höhe (cm)</span><input value="{{ draft.h }}" onChange="{{ onH }}" type="number" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="100"></label>
+
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Jahr</span><input value="{{ draft.year }}" onChange="{{ onYear }}" type="number" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="2024"></label>
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Preis (€)</span><input value="{{ draft.price }}" onChange="{{ onPrice }}" type="number" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)" placeholder="1450"></label>
+
+            <label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Beschreibung</span><textarea value="{{ draft.desc }}" onChange="{{ onDesc }}" rows="4" style="width:100%;padding:12px 14px;background:var(--surface,#fff);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;resize:vertical" style-focus="border-color:var(--accent)" placeholder="Ein paar Worte zum Werk …"></textarea></label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:28px;padding-top:22px;border-top:1px solid rgba(34,31,28,.1)">
+          <button onClick="{{ saveWork }}" style="padding:14px 30px;background:var(--accent);color:#fff;border:none;border-radius:2px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)">Speichern</button>
+          <button onClick="{{ cancelEdit }}" style="padding:14px 30px;background:transparent;color:#221f1c;border:1px solid rgba(34,31,28,.28);border-radius:2px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer" style-hover="border-color:var(--accent)">Abbrechen</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ===== CONTENT ===== -->
+      <sc-if value="{{ isContent }}">
+      <div style="padding:38px 40px;max-width:760px;animation:fadeUp .35s ease both">
+        <div style="font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:#8a8075;margin-bottom:9px">Verwaltung</div>
+        <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:34px;margin:0 0 30px;line-height:1">Inhalte</h1>
+
+        <div style="background:var(--surface,#fff);border:1px solid rgba(34,31,28,.1);border-radius:6px;padding:28px;margin-bottom:22px">
+          <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:18px;margin:0 0 6px">Branding · Logo</h2>
+          <p style="font-size:13px;color:#8a8075;margin:0 0 18px;line-height:1.6">Ersetzt die Wortmarke „Try &amp; Error" im Store-Header und -Footer durch dein eigenes Logo. Ohne Bild wird die Textmarke weiter angezeigt.</p>
+          <div style="display:flex;align-items:center;gap:20px">
+            <image-slot id="brand-logo" shape="rounded" radius="4" placeholder="Logo hierher ziehen oder klicken" style="width:120px;height:120px;flex:none;background:var(--input,#faf8f5);border:1.5px dashed rgba(34,31,28,.25)"></image-slot>
+            <div style="font-size:12.5px;color:#8a8075;line-height:1.7">Empfohlen: quadratisch, PNG mit transparentem Hintergrund, mind. 240×240px.</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface,#fff);border:1px solid rgba(34,31,28,.1);border-radius:6px;padding:28px;margin-bottom:22px">
+          <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:18px;margin:0 0 18px">Startseite · Hero</h2>
+          <label style="display:block;margin-bottom:16px"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Überschrift</span><input value="{{ content.heroTitle }}" onChange="{{ onHeroTitle }}" style="width:100%;padding:12px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)"></label>
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Untertext</span><textarea value="{{ content.heroSub }}" onChange="{{ onHeroSub }}" rows="3" style="width:100%;padding:12px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;resize:vertical" style-focus="border-color:var(--accent)"></textarea></label>
+        </div>
+
+        <div style="background:var(--surface,#fff);border:1px solid rgba(34,31,28,.1);border-radius:6px;padding:28px;margin-bottom:24px">
+          <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:18px;margin:0 0 18px">Über mich</h2>
+          <label style="display:block;margin-bottom:16px"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Überschrift</span><input value="{{ content.aboutTitle }}" onChange="{{ onAboutTitle }}" style="width:100%;padding:12px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent)"></label>
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Text</span><textarea value="{{ content.aboutText }}" onChange="{{ onAboutText }}" rows="5" style="width:100%;padding:12px 14px;background:var(--input,#faf8f5);border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;resize:vertical" style-focus="border-color:var(--accent)"></textarea></label>
+        </div>
+
+        <button onClick="{{ saveContent }}" style="padding:14px 30px;background:var(--accent);color:#fff;border:none;border-radius:2px;font-size:13px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)">Speichern</button>
+      </div>
+      </sc-if>
+
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;headlineFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Hanken (Sans)&quot;,&quot;options&quot;:[&quot;Spectral (Serif)&quot;,&quot;Hanken (Sans)&quot;,&quot;Jost (Geometrisch)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Design&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#000000&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#000000&quot;,&quot;#1a1a1a&quot;,&quot;#3f3f3f&quot;,&quot;#5a5a5a&quot;],&quot;section&quot;:&quot;Design&quot;},&quot;hintergrund&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Weiß&quot;,&quot;options&quot;:[&quot;Creme&quot;,&quot;Weiß&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Design&quot;}}">
+class Component extends DCLogic {
+  state = {
+    authed:false, view:'works', flash:false, draft:null,
+    works:[
+      { id:1, title:'Morgennebel', technique:'Öl auf Leinwand', w:80, h:100, year:2024, price:1450, kind:'unique', edition:'', status:'verfügbar', desc:'Ein weiches Landschaftsmotiv im ersten Licht des Tages.' },
+      { id:2, title:'Küstenlicht', technique:'Acryl auf Leinwand', w:60, h:80, year:2023, price:980, kind:'unique', edition:'', status:'verkauft', desc:'Kräftige Acrylflächen fangen das flirrende Licht über dem Wasser ein.' },
+      { id:3, title:'Stille', technique:'Aquarell auf Papier', w:30, h:40, year:2024, price:320, kind:'unique', edition:'', status:'verfügbar', desc:'Eine zarte, meditative Studie in gedeckten Tönen.' },
+      { id:4, title:'Feldstudie', technique:'Kunstdruck (Fine Art)', w:50, h:70, year:2024, price:120, kind:'edition', edition:'Edition von 50', status:'verfügbar', desc:'Fine-Art-Print auf Hahnemühle-Papier, handsigniert.' },
+      { id:5, title:'Abendrot', technique:'Öl auf Leinwand', w:100, h:120, year:2022, price:1980, kind:'unique', edition:'', status:'verfügbar', desc:'Ein großformatiges Statement in warmen Rot- und Ockertönen.' },
+      { id:6, title:'Fragment', technique:'Mischtechnik auf Holz', w:40, h:40, year:2024, price:540, kind:'unique', edition:'', status:'verfügbar', desc:'Collagierte Papiere, Kreide und Öl auf Holztafel.' },
+      { id:7, title:'Horizont', technique:'Kunstdruck (Fine Art)', w:40, h:50, year:2023, price:95, kind:'edition', edition:'Edition von 100', status:'verfügbar', desc:'Ruhiger Farbverlauf als handsignierter Fine-Art-Print.' },
+    ],
+    content:{
+      heroTitle:'Malerei aus dem Atelier.',
+      heroSub:'Handgemalte Unikate und limitierte Editionen — direkt aus dem Studio zu dir nach Hause. Jedes Werk erzählt eine eigene, stille Geschichte.',
+      aboutTitle:'Try & Error',
+      aboutText:'Ich male in meinem Atelier in Stuttgart — meist in Öl und Acryl, manchmal in Aquarell. Meine Arbeiten kreisen um Licht, Landschaft und stille Momente.',
+    },
+  };
+
+  fmt(n){ return (Number(n)||0).toLocaleString('de-DE') + ' €'; }
+  flashSave(){ this.setState({flash:true}); clearTimeout(this._ft); this._ft=setTimeout(()=>this.setState({flash:false}),2200); }
+
+  login(){ this.setState({authed:true, view:'works'}); }
+  logout(){ this.setState({authed:false}); }
+  goWorks(){ this.setState({view:'works', draft:null}); }
+  goContent(){ this.setState({view:'content'}); }
+
+  newWork(){ this.setState({ view:'edit', draft:{ id:null, title:'', technique:'', w:'', h:'', year:'', price:'', kind:'unique', edition:'', status:'verfügbar', desc:'' } }); }
+  editWork(id){ const w=this.state.works.find(x=>x.id===id); this.setState({ view:'edit', draft:{ ...w, w:String(w.w), h:String(w.h), year:String(w.year), price:String(w.price) } }); }
+  delWork(id){ this.setState(s=>({ works:s.works.filter(x=>x.id!==id) })); this.flashSave(); }
+  toggleStatus(id){ this.setState(s=>({ works:s.works.map(x=> x.id===id ? {...x, status: x.status==='verkauft'?'verfügbar':'verkauft'} : x) })); }
+  cancelEdit(){ this.setState({ view:'works', draft:null }); }
+  saveWork(){
+    const d=this.state.draft; if(!d) return;
+    const rec={ id:d.id, title:d.title||'Ohne Titel', technique:d.technique, w:Number(d.w)||0, h:Number(d.h)||0, year:Number(d.year)||new Date().getFullYear(), price:Number(d.price)||0, kind:d.kind, edition:d.kind==='edition'?(d.edition||'Edition'):'', status:d.status, desc:d.desc };
+    this.setState(s=>{
+      if(d.id==null){ const id=Math.max(0,...s.works.map(x=>x.id))+1; return { works:[...s.works,{...rec,id}], view:'works', draft:null }; }
+      return { works:s.works.map(x=>x.id===d.id?rec:x), view:'works', draft:null };
+    });
+    this.flashSave();
+  }
+
+  setDraft(k,v){ this.setState(s=>({ draft:{...s.draft,[k]:v} })); }
+  setContent(k,v){ this.setState(s=>({ content:{...s.content,[k]:v} })); }
+  saveContent(){ this.flashSave(); }
+
+  renderVals(){
+    const s=this.state;
+    const accent = this.props.accent ?? '#000000';
+    const accentHover = `color-mix(in srgb, ${accent} 74%, #fff)`;
+    const headMap = {
+      'Spectral (Serif)': "'Spectral', Georgia, serif",
+      'Hanken (Sans)': "'Hanken Grotesk', system-ui, sans-serif",
+      'Jost (Geometrisch)': "'Jost', system-ui, sans-serif",
+    };
+    const headFont = headMap[this.props.headlineFont ?? 'Hanken (Sans)'] || headMap['Spectral (Serif)'];
+    const pureBW = (this.props.hintergrund ?? 'Weiß') === 'Weiß';
+    const bg = pureBW ? '#ffffff' : '#F9F7F4';
+    const surface = pureBW ? '#fafafa' : '#ffffff';
+    const inputBg = pureBW ? '#ffffff' : '#faf8f5';
+
+    const navBase='display:flex;align-items:center;gap:11px;padding:11px 12px;border-radius:3px;font-size:14px;letter-spacing:.02em;cursor:pointer;transition:background .15s';
+    const navOn=navBase+`;background:color-mix(in srgb, ${accent} 10%, #fff);color:#221f1c;box-shadow:inset 3px 0 0 ${accent}`;
+    const navOff=navBase+';color:#4a453f';
+
+    const rows=s.works.map(w=>({
+      id:w.id, title:w.title, technique:w.technique, priceLabel:this.fmt(w.price),
+      meta: w.kind==='edition' ? w.edition : `${w.w} × ${w.h} cm`,
+      statusLabel: w.status==='verkauft'?'Verkauft':'Verfügbar',
+      statusStyle: 'justify-self:start;cursor:pointer;padding:5px 12px;border-radius:20px;font-size:11.5px;letter-spacing:.06em;'+(w.status==='verkauft'
+        ? 'background:rgba(34,31,28,.07);color:#8a8075'
+        : 'background:color-mix(in srgb, #1f8a5b 14%, #fff);color:#1f7a52'),
+      edit:()=>this.editWork(w.id), del:()=>this.delWork(w.id), toggle:()=>this.toggleStatus(w.id),
+    }));
+
+    const d=s.draft||{};
+    const df=(k)=>(e)=>this.setDraft(k, e.target.value);
+    const cf=(k)=>(e)=>this.setContent(k, e.target.value);
+
+    return {
+      accent, accentHover, headFont, bg, surface, inputBg,
+      isLogin:!s.authed, isAuthed:s.authed,
+      isWorks:s.view==='works', isEdit:s.view==='edit', isContent:s.view==='content',
+      flash:s.flash,
+      navWorksStyle: s.view==='works'?navOn:navOff,
+      navContentStyle: s.view==='content'?navOn:navOff,
+      rows,
+      draft:{ title:d.title||'', technique:d.technique||'', w:d.w||'', h:d.h||'', year:d.year||'', price:d.price||'', kind:d.kind||'unique', edition:d.edition||'', status:d.status||'verfügbar', desc:d.desc||'' },
+      draftIsEdition: (d.kind||'unique')==='edition',
+      editTitle: d.id==null ? 'Neues Werk' : 'Werk bearbeiten',
+      content:s.content,
+      login:()=>this.login(), logout:()=>this.logout(), goWorks:()=>this.goWorks(), goContent:()=>this.goContent(),
+      newWork:()=>this.newWork(), saveWork:()=>this.saveWork(), cancelEdit:()=>this.cancelEdit(), saveContent:()=>this.saveContent(),
+      onTitle:df('title'), onTech:df('technique'), onW:df('w'), onH:df('h'), onYear:df('year'), onPrice:df('price'), onKind:df('kind'), onStatus:df('status'), onEdition:df('edition'), onDesc:df('desc'),
+      onHeroTitle:cf('heroTitle'), onHeroSub:cf('heroSub'), onAboutTitle:cf('aboutTitle'), onAboutText:cf('aboutText'),
+    };
+  }
+}
+</script>
+</body>
+</html>

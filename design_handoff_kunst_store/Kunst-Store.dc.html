@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&amp;family=Hanken+Grotesk:wght@400;500;600;700&amp;family=Jost:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#F9F7F4;color:#221f1c;font-family:'Jost',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:#221f1c;text-decoration:none}
+  a:hover{color:var(--accent,#bf8a5f)}
+  input,textarea,button,select{font-family:inherit}
+  ::selection{background:rgba(191,138,95,.28)}
+  input::placeholder,textarea::placeholder{color:rgba(34,31,28,.34)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="--accent: {{ accent }}; --accent-hover: {{ accentHover }}; --accent-active: {{ accentActive }}; --bg: {{ bg }}; --bg-alt: {{ bgAlt }}; --bg-card: {{ bgCard }}; --header-bg: {{ headerBg }}; --ph-a: {{ phA }}; --ph-b: {{ phB }}; --head-font: {{ headFont }}; --cols: {{ cols }}; min-height:100vh;background:var(--bg);display:flex;flex-direction:column">
+
+  <!-- ============ HEADER ============ -->
+  <header style="position:sticky;top:0;z-index:40;padding:20px 0;background:var(--header-bg,rgba(249,247,244,.82));backdrop-filter:blur(10px);border-bottom:1px solid rgba(34,31,28,.09)">
+   <div style="width:90%;max-width:1360px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+    <div onClick="{{ goGallery }}" style="cursor:pointer;line-height:1">
+      <div style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:20px;letter-spacing:.02em">Try &amp; Error</div>
+      <div style="font-family:'Jost';font-weight:400;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:#8a8075;margin-top:3px">Atelier Stuttgart</div>
+    </div>
+    <nav style="display:flex;align-items:center;gap:clamp(18px,3vw,40px)">
+      <span onClick="{{ goGallery }}" style="cursor:pointer;font-size:13px;letter-spacing:.14em;text-transform:uppercase">Werke</span>
+      <span onClick="{{ goContact }}" style="cursor:pointer;font-size:13px;letter-spacing:.14em;text-transform:uppercase">Kontakt</span>
+      <button onClick="{{ goCart }}" style="position:relative;display:inline-flex;align-items:center;gap:9px;padding:9px 16px 9px 14px;background:transparent;border:1px solid rgba(34,31,28,.22);border-radius:2px;cursor:pointer;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#221f1c" style-hover="border-color:var(--accent,#bf8a5f);background:rgba(34,31,28,.03)" style-active="background:rgba(34,31,28,.07);transform:translateY(1px)">
+        <span style="font-size:15px;line-height:1">◇</span>
+        Warenkorb
+        <sc-if value="{{ cartCount }}" hint-placeholder-val="{{ true }}"><span style="min-width:19px;height:19px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;background:var(--accent,#bf8a5f);color:#fff;border-radius:20px;font-size:11px;letter-spacing:0">{{ cartCount }}</span></sc-if>
+      </button>
+    </nav>
+   </div>
+  </header>
+
+  <main style="flex:1">
+
+  <!-- ============ GALLERY VIEW ============ -->
+  <sc-if value="{{ isGallery }}" hint-placeholder-val="{{ true }}">
+  <div style="animation:fadeUp .5s ease both">
+
+    <!-- HERO -->
+    <sc-if value="{{ showHero }}" hint-placeholder-val="{{ true }}">
+    <section style="width:90%;max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,64px);align-items:center;padding:clamp(48px,7vw,104px) 0 clamp(40px,5vw,72px)">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:26px">
+          <span style="width:34px;height:1px;background:var(--accent,#bf8a5f)"></span>
+          <span style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#8a8075">Originale &amp; Editionen</span>
+        </div>
+        <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(42px,6vw,80px);line-height:1.02;margin:0;letter-spacing:-.01em">Malerei aus<br>dem Atelier.</h1>
+        <p style="max-width:440px;font-size:clamp(16px,1.5vw,19px);line-height:1.65;color:#4a453f;margin:28px 0 36px">Handgemalte Unikate und limitierte Editionen — direkt aus dem Studio zu dir nach Hause. Jedes Werk erzählt eine eigene, stille Geschichte.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px">
+          <button onClick="{{ scrollToWorks }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 30px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Werke ansehen →</button>
+          <button onClick="{{ goContact }}" style="display:inline-flex;align-items:center;gap:12px;padding:15px 30px;background:transparent;color:#221f1c;border:1px solid rgba(34,31,28,.28);border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:border-color .2s" style-hover="border-color:var(--accent,#bf8a5f);background:rgba(34,31,28,.03)" style-active="background:rgba(34,31,28,.07);transform:translateY(1px)">Anfrage stellen</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:clamp(10px,1.6vw,20px);justify-content:center;align-items:flex-end">
+        <div style="width:38%;aspect-ratio:3/5;border-radius:120px 120px 0 0;overflow:hidden;background:var(--ph-a,#e7e2da)"><img src="uploads/pasted-1783373999988-0.png" alt="Kunstobjekt" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+        <div style="width:44%;aspect-ratio:3/5;margin-bottom:34px;border-radius:150px 150px 0 0;overflow:hidden;background:var(--ph-b,#ddd7cd)"><img src="uploads/pasted-1783374008858-0.png" alt="Portrait" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- WORKS GRID -->
+    <section id="werke" style="width:90%;max-width:1360px;margin:0 auto;padding:clamp(24px,3vw,40px) 0 clamp(56px,7vw,96px);scroll-margin-top:90px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:clamp(30px,4vw,52px);border-bottom:1px solid rgba(34,31,28,.12);padding-bottom:20px">
+        <div>
+          <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#8a8075;margin-bottom:10px">Die Sammlung</div>
+          <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(28px,3.4vw,42px);margin:0;line-height:1">Alle Werke</h2>
+        </div>
+        <span style="font-size:13px;letter-spacing:.06em;color:#8a8075">{{ workCount }} Arbeiten</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(var(--cols,3),1fr);gap:clamp(20px,2.6vw,44px)">
+        <sc-for list="{{ works }}" as="w" hint-placeholder-count="6">
+          <div onClick="{{ w.open }}" style="cursor:pointer;transition:transform .3s ease" style-hover="transform:translateY(-4px)">
+            <div style="position:relative;aspect-ratio:4/5;overflow:hidden;background:repeating-linear-gradient(135deg,var(--ph-a,#e7e2da) 0,var(--ph-a,#e7e2da) 11px,var(--ph-b,#ddd7cd) 11px,var(--ph-b,#ddd7cd) 22px);display:flex;align-items:center;justify-content:center">
+              <span style="font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.16em;color:#9a8f80;text-transform:uppercase">Werkabbildung</span>
+              <sc-if value="{{ w.sold }}"><div style="position:absolute;inset:0;background:rgba(249,247,244,.5);display:flex;align-items:center;justify-content:center"><span style="padding:8px 16px;background:#221f1c;color:#F9F7F4;font-size:11px;letter-spacing:.2em;text-transform:uppercase">Verkauft</span></div></sc-if>
+              <sc-if value="{{ w.isEdition }}"><span style="position:absolute;top:12px;left:12px;padding:5px 11px;background:rgba(249,247,244,.9);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#4a453f">Edition</span></sc-if>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-top:16px">
+              <h3 style="font-family:var(--head-font,'Spectral',serif);font-weight:500;font-size:20px;margin:0;line-height:1.15">{{ w.title }}</h3>
+              <span style="font-size:15px;color:#221f1c;white-space:nowrap">{{ w.priceLabel }}</span>
+            </div>
+            <p style="margin:6px 0 0;font-size:13px;letter-spacing:.02em;color:#8a8075">{{ w.metaLine }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ABOUT STRIP -->
+    <section style="border-top: 1px solid rgba(34,31,28,.09); background-color: #F6F3EE">
+     <div style="width:90%;max-width:1360px;margin:0 auto;display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(24px,5vw,72px);align-items:center;padding:clamp(48px,7vw,96px) 0">
+      <div style="aspect-ratio:4/5;border-radius:160px 160px 0 0;background:repeating-linear-gradient(135deg,var(--ph-a,#e7e2da) 0,var(--ph-a,#e7e2da) 11px,var(--ph-b,#ddd7cd) 11px,var(--ph-b,#ddd7cd) 22px);display:flex;align-items:flex-end;justify-content:center;padding-bottom:18px"><span style="font-family:ui-monospace,Menlo,monospace;font-size:10px;letter-spacing:.14em;color:#a99e8d;text-transform:uppercase">Portrait</span></div>
+      <div>
+        <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#8a8075;margin-bottom:16px">Über das Projekt</div>
+        <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(26px,3.2vw,40px);margin:0 0 22px;line-height:1.1">Try &amp; Error</h2>
+        <p style="max-width:560px;font-size:16px;line-height:1.7;color:#4a453f;margin:0 0 16px">Try &amp; Error ist ein offenes Atelier-Projekt aus Stuttgart.</p><p style="max-width:560px;font-size:16px;line-height:1.7;color:#4a453f;margin:0 0 16px">Hier entstehen handgemalte Unikate und kleine Editionen — meist in Öl und Acryl, manchmal in Aquarell. Das Projekt kreist um Licht, Landschaft und stille Momente und versteht das Ausprobieren als festen Teil der Arbeit.</p>
+        <p style="max-width:560px;font-size:16px;line-height:1.7;color:#4a453f;margin:0">Jedes Original ist ein Unikat und wird sorgfältig verpackt versendet. Editionen entstehen als kleine, limitierte Auflagen. Bei Fragen zu einem Werk schreib uns gern.</p>
+      </div>
+     </div>
+    </section>
+
+  </div>
+  </sc-if>
+
+  <!-- ============ DETAIL VIEW ============ -->
+  <sc-if value="{{ isDetail }}">
+  <div style="animation:fadeUp .4s ease both;width:90%;max-width:1360px;margin:0 auto;padding:clamp(28px,4vw,48px) 0 clamp(56px,7vw,96px)">
+    <span onClick="{{ goGallery }}" style="cursor:pointer;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a8075" style-hover="color:var(--accent,#bf8a5f)">← Alle Werke</span>
+    <div style="display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,4vw,72px);margin-top:26px;align-items:start">
+      <div style="position:relative;aspect-ratio:4/5;background:repeating-linear-gradient(135deg,var(--ph-a,#e7e2da) 0,var(--ph-a,#e7e2da) 13px,var(--ph-b,#ddd7cd) 13px,var(--ph-b,#ddd7cd) 26px);display:flex;align-items:center;justify-content:center">
+        <span style="font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.16em;color:#9a8f80;text-transform:uppercase">Werkabbildung</span>
+        <sc-if value="{{ detail.sold }}"><div style="position:absolute;inset:0;background:rgba(249,247,244,.5);display:flex;align-items:center;justify-content:center"><span style="padding:9px 18px;background:#221f1c;color:#F9F7F4;font-size:12px;letter-spacing:.2em;text-transform:uppercase">Verkauft</span></div></sc-if>
+      </div>
+      <div style="position:sticky;top:100px">
+        <sc-if value="{{ detail.isEdition }}"><div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent,#bf8a5f);margin-bottom:12px">{{ detail.edition }}</div></sc-if>
+        <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(32px,4vw,52px);line-height:1.04;margin:0">{{ detail.title }}</h1>
+        <p style="font-size:15px;letter-spacing:.02em;color:#8a8075;margin:14px 0 0">{{ detail.subMeta }}</p>
+        <div style="font-family:var(--head-font,'Spectral',serif);font-size:30px;margin:26px 0 22px">{{ detail.priceLabel }}</div>
+
+        <dl style="margin:0 0 30px;border-top:1px solid rgba(34,31,28,.12)">
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(34,31,28,.1)"><dt style="font-size:13px;letter-spacing:.06em;color:#8a8075;text-transform:uppercase">Technik</dt><dd style="margin:0;font-size:15px">{{ detail.technique }}</dd></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(34,31,28,.1)"><dt style="font-size:13px;letter-spacing:.06em;color:#8a8075;text-transform:uppercase">Maße</dt><dd style="margin:0;font-size:15px">{{ detail.size }}</dd></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(34,31,28,.1)"><dt style="font-size:13px;letter-spacing:.06em;color:#8a8075;text-transform:uppercase">Jahr</dt><dd style="margin:0;font-size:15px">{{ detail.year }}</dd></div>
+          <div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(34,31,28,.1)"><dt style="font-size:13px;letter-spacing:.06em;color:#8a8075;text-transform:uppercase">Verfügbarkeit</dt><dd style="margin:0;font-size:15px;color:{{ detail.statusColor }}">{{ detail.statusLabel }}</dd></div>
+        </dl>
+
+        <p style="font-size:16px;line-height:1.7;color:#4a453f;margin:0 0 30px">{{ detail.desc }}</p>
+
+        <sc-if value="{{ detail.available }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-wrap:wrap;gap:12px">
+            <button onClick="{{ detail.buy }}" style="flex:1;min-width:180px;padding:16px 28px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Jetzt kaufen</button>
+            <button onClick="{{ detail.add }}" style="flex:1;min-width:180px;padding:16px 28px;background:transparent;color:#221f1c;border:1px solid rgba(34,31,28,.28);border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:border-color .2s" style-hover="border-color:var(--accent,#bf8a5f);background:rgba(34,31,28,.03)" style-active="background:rgba(34,31,28,.07);transform:translateY(1px)">In den Warenkorb</button>
+          </div>
+          <sc-if value="{{ detail.inCart }}"><p style="margin:14px 0 0;font-size:13px;color:var(--accent,#bf8a5f)">✓ {{ detail.inCartLabel }} im Warenkorb</p></sc-if>
+        </sc-if>
+        <sc-if value="{{ detail.sold }}">
+          <button onClick="{{ goContact }}" style="width:100%;padding:16px 28px;background:transparent;color:#221f1c;border:1px solid rgba(34,31,28,.28);border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer" style-hover="border-color:var(--accent,#bf8a5f);background:rgba(34,31,28,.03)" style-active="background:rgba(34,31,28,.07);transform:translateY(1px)">Ähnliches Werk anfragen</button>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ CART VIEW ============ -->
+  <sc-if value="{{ isCart }}">
+  <div style="animation:fadeUp .4s ease both;width:90%;max-width:900px;margin:0 auto;padding:clamp(32px,4vw,56px) 0 clamp(56px,7vw,96px)">
+    <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(30px,4vw,44px);margin:0 0 30px">Warenkorb</h1>
+    <sc-if value="{{ cartEmpty }}">
+      <div style="padding:56px 0;text-align:center;border-top:1px solid rgba(34,31,28,.12)">
+        <p style="font-size:17px;color:#4a453f;margin:0 0 24px">Dein Warenkorb ist noch leer.</p>
+        <button onClick="{{ goGallery }}" style="padding:14px 30px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .12s,transform .12s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Werke entdecken</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasCart }}">
+      <div style="border-top:1px solid rgba(34,31,28,.12)">
+        <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="2">
+          <div style="display:flex;gap:20px;align-items:center;padding:22px 0;border-bottom:1px solid rgba(34,31,28,.1)">
+            <div style="width:76px;height:96px;flex:none;background:repeating-linear-gradient(135deg,var(--ph-a,#e7e2da) 0,var(--ph-a,#e7e2da) 9px,var(--ph-b,#ddd7cd) 9px,var(--ph-b,#ddd7cd) 18px)"></div>
+            <div style="flex:1">
+              <h3 style="font-family:var(--head-font,'Spectral',serif);font-weight:500;font-size:19px;margin:0">{{ c.title }}</h3>
+              <p style="margin:5px 0 0;font-size:13px;color:#8a8075">{{ c.metaLine }}</p>
+              <span onClick="{{ c.remove }}" style="display:inline-block;margin-top:9px;cursor:pointer;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a8075;text-decoration:underline" style-hover="color:var(--accent,#bf8a5f)">Entfernen</span>
+            </div>
+            <sc-if value="{{ c.isEdition }}">
+              <div style="display:flex;align-items:center;gap:2px;border:1px solid rgba(34,31,28,.2);border-radius:2px">
+                <button onClick="{{ c.dec }}" style="width:34px;height:34px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#221f1c;transition:background .12s" style-hover="background:rgba(34,31,28,.06)" style-active="background:rgba(34,31,28,.12)">−</button>
+                <span style="min-width:22px;text-align:center;font-size:14px">{{ c.qty }}</span>
+                <button onClick="{{ c.inc }}" style="width:34px;height:34px;background:transparent;border:none;cursor:pointer;font-size:16px;color:#221f1c;transition:background .12s" style-hover="background:rgba(34,31,28,.06)" style-active="background:rgba(34,31,28,.12)">+</button>
+              </div>
+            </sc-if>
+            <div style="width:110px;text-align:right;font-size:16px">{{ c.lineLabel }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:26px">
+        <div style="width:min(340px,100%)">
+          <div style="display:flex;justify-content:space-between;font-size:15px;color:#4a453f;padding:6px 0"><span>Zwischensumme</span><span>{{ cartTotalLabel }}</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px;color:#4a453f;padding:6px 0;border-bottom:1px solid rgba(34,31,28,.12)"><span>Versand &amp; Verpackung</span><span>inklusive</span></div>
+          <div style="display:flex;justify-content:space-between;font-family:var(--head-font,'Spectral',serif);font-size:24px;padding:16px 0 22px"><span>Gesamt</span><span>{{ cartTotalLabel }}</span></div>
+          <button onClick="{{ goCheckout }}" style="width:100%;padding:16px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Zur Kasse</button>
+          <span onClick="{{ goGallery }}" style="display:block;text-align:center;margin-top:14px;cursor:pointer;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a8075">weiter stöbern</span>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ============ CHECKOUT VIEW ============ -->
+  <sc-if value="{{ isCheckout }}">
+  <div style="animation:fadeUp .4s ease both;width:90%;max-width:1080px;margin:0 auto;padding:clamp(28px,4vw,48px) 0 clamp(56px,7vw,96px)">
+    <span onClick="{{ goCart }}" style="cursor:pointer;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a8075" style-hover="color:var(--accent,#bf8a5f)">← Warenkorb</span>
+    <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(30px,4vw,44px);margin:18px 0 34px">Kasse</h1>
+    <div style="display:grid;grid-template-columns:1.3fr .9fr;gap:clamp(28px,4vw,60px);align-items:start">
+
+      <!-- FORM -->
+      <div>
+        <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:22px;margin:0 0 18px">Kontakt &amp; Lieferung</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Vorname</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="Max"></label>
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Nachname</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="Mustermann"></label>
+          <label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">E-Mail</span><input type="email" style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="max@beispiel.de"></label>
+          <label style="display:block;grid-column:1/-1"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Straße &amp; Nr.</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="Musterstraße 12"></label>
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">PLZ</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="70173"></label>
+          <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Ort</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="Stuttgart"></label>
+        </div>
+
+        <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:22px;margin:36px 0 18px">Zahlungsart</h2>
+
+        <div onClick="{{ setStripe }}" style="{{ payStripeStyle }}">
+          <span style="width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--accent,#bf8a5f);display:flex;align-items:center;justify-content:center"><sc-if value="{{ stripeOn }}"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#bf8a5f)"></span></sc-if></span>
+          <div style="flex:1"><div style="font-size:15px">Kredit-/Debitkarte</div><div style="font-size:12.5px;color:#8a8075;margin-top:2px">Visa · Mastercard · Apple&nbsp;Pay · Google&nbsp;Pay</div></div>
+          <span style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;color:#a99e8d">STRIPE</span>
+        </div>
+        <sc-if value="{{ stripeOn }}">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:-2px 0 12px;padding:0 2px 4px">
+            <label style="grid-column:1/-1;display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Kartennummer</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;font-family:ui-monospace,monospace" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="4242 4242 4242 4242"></label>
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Gültig bis</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;font-family:ui-monospace,monospace" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="MM / JJ"></label>
+            <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">CVC</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;font-family:ui-monospace,monospace" style-focus="border-color:var(--accent,#bf8a5f)" placeholder="123"></label>
+          </div>
+        </sc-if>
+
+        <div onClick="{{ setPaypal }}" style="{{ payPaypalStyle }}">
+          <span style="width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--accent,#bf8a5f);display:flex;align-items:center;justify-content:center"><sc-if value="{{ paypalOn }}"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#bf8a5f)"></span></sc-if></span>
+          <div style="flex:1"><div style="font-size:15px">PayPal</div><div style="font-size:12.5px;color:#8a8075;margin-top:2px">Weiterleitung zu PayPal beim Bezahlen</div></div>
+          <span style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;color:#a99e8d">PAYPAL</span>
+        </div>
+
+        <div onClick="{{ setRechnung }}" style="{{ payRechnungStyle }}">
+          <span style="width:18px;height:18px;flex:none;border-radius:50%;border:1.5px solid var(--accent,#bf8a5f);display:flex;align-items:center;justify-content:center"><sc-if value="{{ rechnungOn }}"><span style="width:9px;height:9px;border-radius:50%;background:var(--accent,#bf8a5f)"></span></sc-if></span>
+          <div style="flex:1"><div style="font-size:15px">Rechnung / Überweisung</div><div style="font-size:12.5px;color:#8a8075;margin-top:2px">Versand nach Zahlungseingang</div></div>
+          <span style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.12em;color:#a99e8d">SEPA</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:9px;margin-top:20px;font-size:12.5px;color:#8a8075">
+          <span>🔒</span><span>Sichere, SSL-verschlüsselte Zahlung. Deine Daten werden nicht gespeichert.</span>
+        </div>
+      </div>
+
+      <!-- SUMMARY -->
+      <div style="position: sticky; top: 100px; border: 1px solid rgba(34,31,28,.12); border-radius: 4px; padding: 26px; background-color: #F6F3EE">
+        <h2 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:20px;margin:0 0 18px">Bestellübersicht</h2>
+        <sc-for list="{{ cartItems }}" as="c" hint-placeholder-count="2">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-size:14px;color:#4a453f;border-bottom:1px solid rgba(34,31,28,.08)">
+            <span>{{ c.title }} <sc-if value="{{ c.isEdition }}"><span style="color:#8a8075">× {{ c.qty }}</span></sc-if></span>
+            <span style="white-space:nowrap">{{ c.lineLabel }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:space-between;padding:12px 0 0;font-size:14px;color:#8a8075"><span>Versand</span><span>inklusive</span></div>
+        <div style="display:flex;justify-content:space-between;font-family:var(--head-font,'Spectral',serif);font-size:22px;margin:14px 0 22px;padding-top:14px;border-top:1px solid rgba(34,31,28,.14)"><span>Gesamt</span><span>{{ cartTotalLabel }}</span></div>
+        <button onClick="{{ placeOrder }}" style="width:100%;padding:16px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">{{ payCtaLabel }}</button>
+        <p style="margin:14px 0 0;font-size:11.5px;line-height:1.5;color:#8a8075">Mit dem Kauf akzeptierst du die AGB und die Datenschutzerklärung.</p>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ CONFIRM VIEW ============ -->
+  <sc-if value="{{ isConfirm }}">
+  <div style="animation:fadeUp .5s ease both;width:90%;max-width:620px;margin:0 auto;padding:clamp(56px,9vw,120px) 0;text-align:center">
+    <div style="width:64px;height:64px;margin:0 auto 28px;border-radius:50%;border:1.5px solid var(--accent,#bf8a5f);display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--accent,#bf8a5f)">✓</div>
+    <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(30px,4vw,44px);margin:0 0 16px">Vielen Dank!</h1>
+    <p style="font-size:17px;line-height:1.65;color:#4a453f;margin:0 0 8px">Deine Bestellung ist eingegangen. Eine Bestätigung mit allen Details ist unterwegs zu dir.</p>
+    <p style="font-size:14px;color:#8a8075;margin:0 0 6px">Bestellnummer</p>
+    <p style="font-family:ui-monospace,monospace;font-size:20px;letter-spacing:.1em;margin:0 0 6px">{{ orderNo }}</p>
+    <p style="font-size:14px;color:#8a8075;margin:0 0 36px">Zahlung: {{ orderPayLabel }} · Gesamt {{ orderTotalLabel }}</p>
+    <button onClick="{{ goGallery }}" style="padding:15px 32px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .12s,transform .12s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Zurück zur Galerie</button>
+  </div>
+  </sc-if>
+
+  <!-- ============ CONTACT VIEW ============ -->
+  <sc-if value="{{ isContact }}">
+  <div style="animation:fadeUp .4s ease both;width:90%;max-width:640px;margin:0 auto;padding:clamp(40px,6vw,88px) 0 clamp(56px,7vw,96px)">
+    <div style="font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:#8a8075;margin-bottom:14px">Kontakt</div>
+    <h1 style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:clamp(30px,4vw,48px);margin:0 0 18px;line-height:1.05">Schreib mir gern.</h1>
+    <p style="font-size:16px;line-height:1.7;color:#4a453f;margin:0 0 34px">Fragen zu einem Werk, Interesse an einer Auftragsarbeit oder einer bestimmten Größe? Ich melde mich in der Regel innerhalb von zwei Tagen.</p>
+    <sc-if value="{{ contactSent }}">
+      <div style="padding:28px;background:var(--bg-card,#faf7f2);border:1px solid rgba(34,31,28,.12);border-radius:4px;text-align:center">
+        <div style="font-size:24px;color:var(--accent,#bf8a5f);margin-bottom:10px">✓</div>
+        <p style="font-size:16px;margin:0;color:#4a453f">Danke für deine Nachricht — ich melde mich bald bei dir!</p>
+      </div>
+    </sc-if>
+    <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;gap:16px">
+        <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Dein Name</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)"></label>
+        <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">E-Mail</span><input type="email" style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)"></label>
+        <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Betreff</span><input style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none" style-focus="border-color:var(--accent,#bf8a5f)"></label>
+        <label style="display:block"><span style="display:block;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:#8a8075;margin-bottom:7px">Nachricht</span><textarea rows="5" style="width:100%;padding:13px 14px;background:#fff;border:1px solid rgba(34,31,28,.18);border-radius:2px;font-size:15px;color:#221f1c;outline:none;resize:vertical" style-focus="border-color:var(--accent,#bf8a5f)"></textarea></label>
+        <button onClick="{{ sendContact }}" style="justify-self:start;padding:15px 32px;background:var(--accent,#bf8a5f);color:#fff;border:none;border-radius:2px;font-size:13.5px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:background .2s" style-hover="background:var(--accent-hover)" style-active="background:var(--accent-active);transform:translateY(1px)">Nachricht senden</button>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer style="border-top:1px solid rgba(34,31,28,.12);padding:clamp(36px,5vw,56px) 0">
+   <div style="width:90%;max-width:1360px;margin:0 auto">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:24px;align-items:flex-start">
+      <div>
+        <div style="font-family:var(--head-font,'Spectral',serif);font-weight:600;font-size:19px">Try &amp; Error</div>
+        <div style="font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#8a8075;margin-top:5px">Atelier · Stuttgart</div>
+      </div>
+      <div style="display:flex;gap:clamp(28px,5vw,72px);flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <span onClick="{{ goGallery }}" style="cursor:pointer;font-size:13px;color:#4a453f">Werke</span>
+          <span onClick="{{ goContact }}" style="cursor:pointer;font-size:13px;color:#4a453f">Kontakt</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <a href="https://instagram.com" style="font-size:13px;color:#4a453f">Instagram</a>
+          <span style="font-size:13px;color:#4a453f;cursor:pointer">Impressum</span>
+          <span style="font-size:13px;color:#4a453f;cursor:pointer">Datenschutz</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:36px;padding-top:20px;border-top:1px solid rgba(34,31,28,.08);font-size:12px;color:#8a8075">© 2026 Try &amp; Error · Alle Werke urheberrechtlich geschützt</div>
+   </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:920},&quot;headlineFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Hanken (Sans)&quot;,&quot;options&quot;:[&quot;Spectral (Serif)&quot;,&quot;Hanken (Sans)&quot;,&quot;Jost (Geometrisch)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Design&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#000000&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#000000&quot;,&quot;#1a1a1a&quot;,&quot;#3f3f3f&quot;,&quot;#5a5a5a&quot;],&quot;section&quot;:&quot;Design&quot;},&quot;hintergrund&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;Weiß&quot;,&quot;options&quot;:[&quot;Creme&quot;,&quot;Weiß&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Design&quot;},&quot;galleryColumns&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;3&quot;,&quot;options&quot;:[&quot;2&quot;,&quot;3&quot;,&quot;4&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Design&quot;},&quot;showHero&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Design&quot;}}">
+class Component extends DCLogic {
+  state = { view:'gallery', workId:null, cart:{}, payment:'stripe', contactSent:false, orderNo:null, orderPay:null, orderTotal:0 };
+
+  works = [
+    { id:1, title:'Morgennebel', technique:'Öl auf Leinwand', w:80, h:100, year:2024, price:1450, unique:true, status:'verfügbar', desc:'Ein weiches Landschaftsmotiv im ersten Licht des Tages. Lasierende Ölschichten lassen den Nebel über dem Feld beinahe schweben.' },
+    { id:2, title:'Küstenlicht', technique:'Acryl auf Leinwand', w:60, h:80, year:2023, price:980, unique:true, status:'verkauft', desc:'Kräftige Acrylflächen fangen das flirrende Licht über dem Wasser ein — eines meiner ausdrucksstärksten Werke.' },
+    { id:3, title:'Stille', technique:'Aquarell auf Papier', w:30, h:40, year:2024, price:320, unique:true, status:'verfügbar', desc:'Eine zarte, meditative Studie in gedeckten Tönen. Gerahmt hinter entspiegeltem Museumsglas.' },
+    { id:4, title:'Feldstudie', technique:'Kunstdruck (Fine Art)', w:50, h:70, year:2024, price:120, unique:false, edition:'Edition von 50', status:'verfügbar', desc:'Hochwertiger Fine-Art-Print auf Hahnemühle-Papier, handsigniert und nummeriert. Ohne Rahmen.' },
+    { id:5, title:'Abendrot', technique:'Öl auf Leinwand', w:100, h:120, year:2022, price:1980, unique:true, status:'verfügbar', desc:'Ein großformatiges Statement in warmen Rot- und Ockertönen — das Herzstück meiner Landschaftsserie.' },
+    { id:6, title:'Fragment', technique:'Mischtechnik auf Holz', w:40, h:40, year:2024, price:540, unique:true, status:'verfügbar', desc:'Collagierte Papiere, Kreide und Öl auf Holztafel. Ein taktiles, kleines Unikat.' },
+    { id:7, title:'Horizont', technique:'Kunstdruck (Fine Art)', w:40, h:50, year:2023, price:95, unique:false, edition:'Edition von 100', status:'verfügbar', desc:'Ruhiger Farbverlauf als handsignierter Fine-Art-Print. Passt in jeden Standardrahmen.' },
+  ];
+
+  fmt(n){ return n.toLocaleString('de-DE') + ' €'; }
+  top(){ try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }
+
+  goGallery(){ this.setState({view:'gallery'}); this.top(); }
+  goContact(){ this.setState({view:'contact'}); this.top(); }
+  goCart(){ this.setState({view:'cart'}); this.top(); }
+  goCheckout(){ if(this.cartCount()>0){ this.setState({view:'checkout'}); this.top(); } }
+  open(id){ this.setState({view:'detail', workId:id}); this.top(); }
+  scrollToWorks(){ const e=document.getElementById('werke'); if(e){ window.scrollTo({top:e.getBoundingClientRect().top+window.pageYOffset-80,behavior:'smooth'}); } }
+
+  cartCount(){ return Object.values(this.state.cart).reduce((a,b)=>a+b,0); }
+
+  add(id){ const w=this.works.find(x=>x.id===id); if(!w||w.status==='verkauft')return; const max=w.unique?1:99; this.setState(s=>{ const c={...s.cart}; c[id]=Math.min((c[id]||0)+1,max); return {cart:c}; }); }
+  buy(id){ this.add(id); this.setState({view:'checkout'}); this.top(); }
+  setQty(id,q){ this.setState(s=>{ const c={...s.cart}; if(q<=0) delete c[id]; else c[id]=q; return {cart:c}; }); }
+
+  placeOrder(){
+    const total = this.cartTotal();
+    const no = 'MV-' + Math.floor(100000 + Math.random()*900000);
+    const map={stripe:'Kredit-/Debitkarte',paypal:'PayPal',rechnung:'Rechnung / Überweisung'};
+    this.setState({ view:'confirm', orderNo:no, orderPay:map[this.state.payment], orderTotal:total, cart:{} });
+    this.top();
+  }
+  sendContact(){ this.setState({contactSent:true}); }
+
+  cartTotal(){ return Object.entries(this.state.cart).reduce((a,[id,q])=>{ const w=this.works.find(x=>x.id===Number(id)); return a + (w?w.price*q:0); },0); }
+
+  metaOf(w){ return w.unique ? `${w.technique} · ${w.w} × ${w.h} cm` : `${w.edition} · ${w.technique}`; }
+
+  renderVals(){
+    const s=this.state;
+    const accent = this.props.accent ?? '#1a1a1a';
+    const cols = Number(this.props.galleryColumns ?? '3');
+    const showHero = this.props.showHero ?? true;
+    const headMap = {
+      'Spectral (Serif)': "'Spectral', Georgia, serif",
+      'Hanken (Sans)': "'Hanken Grotesk', system-ui, sans-serif",
+      'Jost (Geometrisch)': "'Jost', system-ui, sans-serif",
+    };
+    const headFont = headMap[this.props.headlineFont ?? 'Spectral (Serif)'] || headMap['Spectral (Serif)'];
+    const accentHover = `color-mix(in srgb, ${accent} 74%, #fff)`;
+    const accentActive = `color-mix(in srgb, ${accent} 90%, #fff)`;
+    const pureBW = (this.props.hintergrund ?? 'Creme') === 'Weiß';
+    const bg = pureBW ? '#ffffff' : '#F9F7F4';
+    const bgAlt = pureBW ? '#f4f4f4' : '#f1ede7';
+    const bgCard = pureBW ? '#fafafa' : '#faf7f2';
+    const headerBg = pureBW ? 'rgba(255,255,255,.85)' : 'rgba(249,247,244,.82)';
+    const phA = pureBW ? '#ededed' : '#e7e2da';
+    const phB = pureBW ? '#e2e2e2' : '#ddd7cd';
+
+    const works = this.works.map(w=>({
+      id:w.id, title:w.title, priceLabel:this.fmt(w.price),
+      metaLine:this.metaOf(w), sold:w.status==='verkauft', isEdition:!w.unique,
+      open:()=>this.open(w.id),
+    }));
+
+    const cw = this.works.find(x=>x.id===s.workId);
+    let detail=null;
+    if(cw){
+      const inCartQty = s.cart[cw.id]||0;
+      detail={
+        title:cw.title, technique:cw.technique, size:`${cw.w} × ${cw.h} cm`, year:cw.year,
+        priceLabel:this.fmt(cw.price), desc:cw.desc, isEdition:!cw.unique, edition:cw.edition||'',
+        subMeta: cw.unique ? `Unikat · signiert` : `${cw.edition} · handsigniert & nummeriert`,
+        sold:cw.status==='verkauft', available:cw.status!=='verkauft',
+        statusLabel: cw.status==='verkauft' ? 'Verkauft' : 'Verfügbar',
+        statusColor: cw.status==='verkauft' ? '#8a8075' : accent,
+        inCart: inCartQty>0, inCartLabel: inCartQty>1 ? `${inCartQty}×` : '1×',
+        add:()=>this.add(cw.id), buy:()=>this.buy(cw.id),
+      };
+    }
+
+    const cartItems = Object.entries(s.cart).map(([id,q])=>{ const w=this.works.find(x=>x.id===Number(id)); return {
+      id:w.id, title:w.title, metaLine:this.metaOf(w), qty:q, isEdition:!w.unique,
+      lineLabel:this.fmt(w.price*q),
+      inc:()=>this.setQty(w.id, Math.min(q+1, w.unique?1:99)),
+      dec:()=>this.setQty(w.id, q-1),
+      remove:()=>this.setQty(w.id, 0),
+    }; });
+    const total=this.cartTotal();
+    const count=this.cartCount();
+
+    const payStyle=(m)=>{ const on=s.payment===m; return `display:flex;align-items:center;gap:14px;padding:16px 18px;border:1px solid ${on?'var(--accent,#bf8a5f)':'rgba(34,31,28,.18)'};background:${on?'color-mix(in srgb, var(--accent,#bf8a5f) 7%, #fff)':'#fff'};border-radius:3px;cursor:pointer;margin-bottom:12px;transition:border-color .15s`; };
+    const ctaMap={stripe:'Jetzt bezahlen',paypal:'Mit PayPal bezahlen',rechnung:'Kauf abschließen'};
+
+    return {
+      accent, accentHover, accentActive, bg, bgAlt, bgCard, headerBg, phA, phB, headFont, cols, showHero,
+      isGallery:s.view==='gallery', isDetail:s.view==='detail', isCart:s.view==='cart',
+      isCheckout:s.view==='checkout', isConfirm:s.view==='confirm', isContact:s.view==='contact',
+      works, workCount:this.works.length, detail,
+      cartItems, cartCount:count, cartTotalLabel:this.fmt(total),
+      cartEmpty:count===0, hasCart:count>0,
+      payStripeStyle:payStyle('stripe'), payPaypalStyle:payStyle('paypal'), payRechnungStyle:payStyle('rechnung'),
+      stripeOn:s.payment==='stripe', paypalOn:s.payment==='paypal', rechnungOn:s.payment==='rechnung',
+      payCtaLabel:ctaMap[s.payment],
+      orderNo:s.orderNo, orderPayLabel:s.orderPay, orderTotalLabel:this.fmt(s.orderTotal),
+      contactSent:s.contactSent, contactOpen:!s.contactSent,
+      goGallery:()=>this.goGallery(), goContact:()=>this.goContact(), goCart:()=>this.goCart(),
+      goCheckout:()=>this.goCheckout(), scrollToWorks:()=>this.scrollToWorks(),
+      setStripe:()=>this.setState({payment:'stripe'}), setPaypal:()=>this.setState({payment:'paypal'}), setRechnung:()=>this.setState({payment:'rechnung'}),
+      placeOrder:()=>this.placeOrder(), sendContact:()=>this.sendContact(),
+    };
+  }
+}
+</script>
+</body>
+</html>
