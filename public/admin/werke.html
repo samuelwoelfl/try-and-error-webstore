@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Werke — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">
+      <div class="admin-sidebar__brand-name">Try &amp; Error</div>
+      <div class="admin-sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="admin-nav">
+      <a href="/admin/werke.html" class="admin-nav__link is-active"><span>◇</span>Werke</a>
+      <a href="/admin/inhalte.html" class="admin-nav__link"><span>✎</span>Inhalte</a>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <a href="/" target="_blank" rel="noopener">Store ansehen ↗</a>
+      <button type="button" id="logout-btn">Abmelden</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div id="admin-flash" class="admin-flash" hidden>✓ Änderungen gespeichert</div>
+    <div id="admin-error" class="admin-error-banner" hidden></div>
+
+    <div class="admin-page view-enter">
+      <div class="admin-page-head">
+        <div>
+          <div class="admin-kicker">Verwaltung</div>
+          <h1>Werke</h1>
+        </div>
+        <a href="/admin/werk-editor.html" class="btn btn--primary btn--sm">+ Neues Werk</a>
+      </div>
+
+      <div class="admin-table">
+        <div class="admin-table__head">
+          <span></span><span>Titel</span><span>Technik</span><span>Preis</span><span>Status</span><span style="text-align:right">Aktion</span>
+        </div>
+        <div id="works-rows">
+          <div class="admin-loading">Werke werden geladen …</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/format.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin/common.js"></script>
+<script src="/js/admin/werke.js"></script>
+</body>
+</html>

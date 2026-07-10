@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kasse — Try &amp; Error</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/storefront.css">
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__row">
+    <a href="/" class="wordmark">
+      <div class="wordmark__name" data-wordmark="header">Try &amp; Error</div>
+      <div class="wordmark__sub">Atelier Stuttgart</div>
+    </a>
+    <nav class="site-nav">
+      <a href="/#werke" class="site-nav__link">Werke</a>
+      <a href="/kontakt.html" class="site-nav__link">Kontakt</a>
+      <a href="/warenkorb.html" class="cart-btn">
+        <span style="font-size:15px;line-height:1">◇</span>
+        Warenkorb
+        <span class="badge-cart" data-cart-badge hidden></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="container view-enter" style="max-width:var(--max-detail);padding:clamp(28px,4vw,48px) 0 clamp(56px,7vw,96px)">
+  <a href="/warenkorb.html" class="link-quiet">← Warenkorb</a>
+  <h1 class="heading checkout-title">Kasse</h1>
+
+  <div id="checkout-empty" hidden class="cart-empty">
+    <p>Dein Warenkorb ist leer.</p>
+    <a href="/#werke" class="btn btn--primary">Werke entdecken</a>
+  </div>
+
+  <form id="checkout-form" class="checkout-grid">
+    <div>
+      <div id="form-error" class="form-error" hidden></div>
+
+      <h2>Kontakt &amp; Lieferung</h2>
+      <div class="form-grid">
+        <label class="field"><span class="field__label">Vorname</span><input class="field__input" name="firstName" placeholder="Max" required></label>
+        <label class="field"><span class="field__label">Nachname</span><input class="field__input" name="lastName" placeholder="Mustermann" required></label>
+        <label class="field field--full"><span class="field__label">E-Mail</span><input class="field__input" type="email" name="email" placeholder="max@beispiel.de" required></label>
+        <label class="field field--full"><span class="field__label">Straße &amp; Nr.</span><input class="field__input" name="street" placeholder="Musterstraße 12" required></label>
+        <label class="field"><span class="field__label">PLZ</span><input class="field__input" name="zip" placeholder="70173" required></label>
+        <label class="field"><span class="field__label">Ort</span><input class="field__input" name="city" placeholder="Stuttgart" required></label>
+      </div>
+
+      <h2 class="section-gap">Zahlungsart</h2>
+      <div id="payment-options"></div>
+
+      <div id="stripe-payment-element" hidden></div>
+      <div id="paypal-button-container" hidden style="margin:4px 0 16px"></div>
+      <p id="invoice-hint" class="body-copy" style="font-size:13.5px;margin:-4px 0 16px" hidden>Nach Bestelleingang senden wir dir unsere Bankverbindung per E-Mail. Der Versand erfolgt nach Zahlungseingang.</p>
+
+      <div class="secure-note">
+        <span>🔒</span><span>Sichere, SSL-verschlüsselte Zahlung. Deine Daten werden nicht gespeichert.</span>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <h2>Bestellübersicht</h2>
+      <div id="summary-items"></div>
+      <div class="order-summary__ship"><span>Versand</span><span>inklusive</span></div>
+      <div class="order-summary__total"><span>Gesamt</span><span id="summary-total">0,00 €</span></div>
+      <button type="submit" class="btn btn--primary btn--block" id="pay-cta">Jetzt bezahlen</button>
+      <p class="order-summary__legal">Mit dem Kauf akzeptierst du die AGB und die Datenschutzerklärung.</p>
+    </div>
+  </form>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__top">
+      <div>
+        <div class="site-footer__brand-name" data-wordmark="footer">Try &amp; Error</div>
+        <div class="site-footer__brand-sub">Atelier · Stuttgart</div>
+      </div>
+      <div class="site-footer__links">
+        <div class="site-footer__col">
+          <a href="/#werke">Werke</a>
+          <a href="/kontakt.html">Kontakt</a>
+        </div>
+        <div class="site-footer__col">
+          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+          <span>Impressum</span>
+          <span>Datenschutz</span>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer__legal">© 2026 Try &amp; Error · Alle Werke urheberrechtlich geschützt</div>
+  </div>
+</footer>
+
+<script src="/js/format.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/branding.js"></script>
+<script src="/js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+/* Design tokens — from design_handoff_kunst_store/README.md, verified against the
+   Kunst-Store.dc.html / Kunst-Store Admin.dc.html hi-fi references. */
+:root {
+  /* Colors — "Weiß" mode (default) */
+  --bg: #ffffff;
+  --bg-ivory: #F6F3EE; /* about strip / checkout summary panel */
+  --surface: #fafafa;
+  --input-bg: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.85);
+
+  --text: #221f1c;
+  --text-secondary: #4a453f;
+  --text-tertiary: #8a8075;
+
+  --accent: #000000;
+  --accent-hover: color-mix(in srgb, var(--accent) 74%, #fff);
+  --accent-active: color-mix(in srgb, var(--accent) 90%, #fff);
+
+  --border-faint: rgba(34, 31, 28, 0.08);
+  --border-subtle: rgba(34, 31, 28, 0.1);
+  --border: rgba(34, 31, 28, 0.18);
+  --border-strong: rgba(34, 31, 28, 0.28);
+
+  --status-sold-bg: rgba(34, 31, 28, 0.07);
+  --status-sold-text: #8a8075;
+  --status-available-bg: color-mix(in srgb, #1f8a5b 14%, #fff);
+  --status-available-text: #1f7a52;
+  --status-danger-text: #b06a5f;
+
+  --ph-a: #ededed;
+  --ph-b: #e2e2e2;
+
+  /* Typography */
+  --font-heading: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-heading-weight: 600;
+  --font-body: 'Jost', system-ui, sans-serif;
+
+  /* Shape */
+  --radius-control: 2px;
+  --radius-panel: 4px;
+  --radius-panel-lg: 6px;
+  --radius-pill: 20px;
+
+  /* Layout */
+  --max-content: 1360px;
+  --max-detail: 1080px;
+  --max-cart: 900px;
+  --max-contact: 640px;
+  --admin-sidebar: 250px;
+
+  /* Motion */
+  --ease-interactive: 0.15s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}

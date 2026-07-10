@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Try &amp; Error — Malerei aus dem Atelier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/storefront.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__row">
+    <a href="/" class="wordmark">
+      <div class="wordmark__name" data-wordmark="header">Try &amp; Error</div>
+      <div class="wordmark__sub">Atelier Stuttgart</div>
+    </a>
+    <nav class="site-nav">
+      <a href="/#werke" class="site-nav__link">Werke</a>
+      <a href="/kontakt.html" class="site-nav__link">Kontakt</a>
+      <a href="/warenkorb.html" class="cart-btn">
+        <span style="font-size:15px;line-height:1">◇</span>
+        Warenkorb
+        <span class="badge-cart" data-cart-badge hidden></span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main class="view-enter">
+
+  <section class="container hero">
+    <div>
+      <div class="hero__kicker">
+        <span class="hero__kicker-line"></span>
+        <span class="eyebrow">Originale &amp; Editionen</span>
+      </div>
+      <h1 class="heading hero__title" id="hero-title">Malerei aus<br>dem Atelier.</h1>
+      <p class="hero__sub" id="hero-sub">Handgemalte Unikate und limitierte Editionen — direkt aus dem Studio zu dir nach Hause. Jedes Werk erzählt eine eigene, stille Geschichte.</p>
+      <div class="hero__actions">
+        <a href="#werke" class="btn btn--primary">Werke ansehen →</a>
+        <a href="/kontakt.html" class="btn btn--outline">Anfrage stellen</a>
+      </div>
+    </div>
+    <div class="hero__images">
+      <div class="arch-img hero__img-a"><img src="/img/hero-a.svg" alt="Kunstobjekt"></div>
+      <div class="arch-img hero__img-b"><img src="/img/hero-b.svg" alt="Portrait"></div>
+    </div>
+  </section>
+
+  <section id="werke" class="container works-section">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow" style="margin-bottom:10px">Die Sammlung</div>
+        <h2 class="heading">Alle Werke</h2>
+      </div>
+      <span class="section-head__count" id="work-count">— Arbeiten</span>
+    </div>
+    <div class="works-grid" id="works-grid" style="--gallery-cols:3">
+      <p class="center-note">Werke werden geladen …</p>
+    </div>
+  </section>
+
+  <section class="about-strip">
+    <div class="container about-strip__inner">
+      <div class="arch-img about-strip__portrait stripe-placeholder">
+        <span class="stripe-placeholder__label">Portrait</span>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:16px">Über das Projekt</div>
+        <h2 class="heading about-strip__title" id="about-title">Try &amp; Error</h2>
+        <div id="about-text">
+          <p class="about-strip__text">Try &amp; Error ist ein offenes Atelier-Projekt aus Stuttgart.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__top">
+      <div>
+        <div class="site-footer__brand-name" data-wordmark="footer">Try &amp; Error</div>
+        <div class="site-footer__brand-sub">Atelier · Stuttgart</div>
+      </div>
+      <div class="site-footer__links">
+        <div class="site-footer__col">
+          <a href="/#werke">Werke</a>
+          <a href="/kontakt.html">Kontakt</a>
+        </div>
+        <div class="site-footer__col">
+          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
+          <span>Impressum</span>
+          <span>Datenschutz</span>
+        </div>
+      </div>
+    </div>
+    <div class="site-footer__legal">© 2026 Try &amp; Error · Alle Werke urheberrechtlich geschützt</div>
+  </div>
+</footer>
+
+<script src="/js/format.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/cart.js"></script>
+<script src="/js/branding.js"></script>
+<script src="/js/gallery.js"></script>
+</body>
+</html>
