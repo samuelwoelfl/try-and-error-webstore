@@ -1,8 +1,17 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../../../inc/bootstrap.php';
-require_once __DIR__ . '/../../../inc/order_builder.php';
-require_once __DIR__ . '/../../../inc/mailer.php';
+$__bootstrapDir = __DIR__;
+while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
+    $__parent = dirname($__bootstrapDir);
+    if ($__parent === $__bootstrapDir) {
+        http_response_code(500);
+        exit('inc/bootstrap.php not found — check that the inc/ folder was uploaded.');
+    }
+    $__bootstrapDir = $__parent;
+}
+require_once $__bootstrapDir . '/inc/bootstrap.php';
+require_once $__bootstrapDir . '/inc/order_builder.php';
+require_once $__bootstrapDir . '/inc/mailer.php';
 
 // No live payment processor — the order is created "pending" and the customer
 // receives the bank details by email; the admin reconciles payment manually and
