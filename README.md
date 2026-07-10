@@ -17,13 +17,19 @@ Umgesetzt nach der Spezifikation in [`design_handoff_kunst_store/README.md`](des
 
 ```
 public/        ← Web-Root. NUR der INHALT dieses Ordners kommt in dein htdocs/-Verzeichnis.
-inc/           ← PHP-Includes (DB, Auth, Stripe/PayPal-Clients, Mailer). NICHT web-exponiert.
-.env           ← Zugangsdaten (DB, Stripe, PayPal, SMTP). NICHT web-exponiert.
+inc/           ← PHP-Includes (DB, Auth, Stripe/PayPal-Clients, Mailer).
+.env           ← Zugangsdaten (DB, Stripe, PayPal, SMTP).
 ```
 
-`inc/` und `.env` müssen **außerhalb** deines Web-Roots liegen (bei Strato: als Geschwisterordner/-datei neben `htdocs/` in deinem FTP-Home, nicht darin). Die PHP-Dateien in `public/api/**.php` binden sie über einen relativen Pfad ein (`../../inc/bootstrap.php`). Das ist der Standardweg, wie PHP-Shared-Hosting Zugangsdaten vor direktem HTTP-Zugriff schützt — sicherer als sich allein auf `.htaccess`-Regeln zu verlassen.
+**Bevorzugt:** `inc/` und `.env` liegen **außerhalb** von `htdocs/` (als Geschwisterordner/-datei in deinem FTP-Home). Dann sind sie über HTTP grundsätzlich unerreichbar, unabhängig von jeglicher Serverkonfiguration.
 
-**Konkret für Strato:**
+**Falls dein FTP-Zugang auf `htdocs/` eingesperrt ist** (bei manchen Strato-Paketen ist das der Fall — man kommt im FTP-Client nicht „eine Ebene höher"): dann lade `inc/` und `.env` einfach **direkt in `htdocs/`** hoch, genau neben die übrigen Dateien. Das ist genauso sicher, weil:
+- `inc/` seine eigene `inc/.htaccess` mitbringt (`Require all denied`) — blockiert jeden direkten HTTP-Zugriff auf alles darin, egal wo der Ordner physisch liegt
+- `.env` durch die `<FilesMatch "^\.">`-Regel in `public/.htaccess` abgedeckt ist (blockiert alle Dotfiles)
+
+Beide Varianten sind also unterstützt — nimm einfach die, die dein FTP-Zugang zulässt.
+
+**Konkret für Strato (freier FTP-Zugriff bis übers Home-Verzeichnis):**
 ```
 dein-ftp-home/
 ├── htdocs/              ← Inhalt von public/ hierhin hochladen
@@ -33,6 +39,17 @@ dein-ftp-home/
 │   └── uploads/         ← muss beschreibbar sein (Standard bei Strato)
 ├── inc/                 ← Ordner inc/ genau so hierhin hochladen
 └── .env                 ← aus .env.example kopieren und ausfüllen, hierhin hochladen
+```
+
+**Konkret für Strato (FTP-Zugriff auf `htdocs/` beschränkt):**
+```
+htdocs/
+├── index.html
+├── api/
+├── css/ js/ img/ admin/
+├── uploads/
+├── inc/                 ← Ordner inc/ hier HINEIN hochladen
+└── .env                 ← .env hier HINEIN hochladen
 ```
 
 ## Setup
@@ -57,7 +74,7 @@ Beim ersten Request legt die App automatisch die Tabellen an, befüllt den Katal
 
 1. Im Strato-Kundenlogin unter „Datenbanken" eine MySQL-Datenbank anlegen → Host/Name/Nutzer/Passwort notieren
 2. `.env` aus `.env.example` lokal ausfüllen (DB-Zugangsdaten + Stripe/PayPal/Bank/Mail)
-3. Per FTP hochladen: Inhalt von `public/` → `htdocs/`, Ordner `inc/` und Datei `.env` als Geschwister von `htdocs/` (siehe Struktur oben)
+3. Per FTP hochladen: Inhalt von `public/` → `htdocs/`, Ordner `inc/` und Datei `.env` entweder als Geschwister von `htdocs/` oder — falls dein FTP-Zugang nicht höher als `htdocs/` kommt — direkt hinein in `htdocs/` (siehe beide Varianten oben)
 4. Domain aufrufen — fertig, kein weiterer Schritt nötig
 5. Stripe-Webhook im Dashboard auf `https://deine-domain.de/api/webhooks/stripe.php` setzen
 
@@ -93,7 +110,8 @@ Nutzt PHPs eingebaute `mail()`-Funktion — auf den meisten Shared-Hosting-Paket
 ## Projektstruktur
 
 ```
-inc/                            PHP-Includes: DB, Auth, Serializer, Stripe/PayPal-Clients, Mailer (nicht web-exponiert)
+inc/                            PHP-Includes: DB, Auth, Serializer, Stripe/PayPal-Clients, Mailer
+  .htaccess                     Blockiert jeden direkten HTTP-Zugriff auf diesen Ordner
 public/                         Web-Root
   api/                          JSON-Endpunkte (Storefront + Admin + Checkout + Webhook)
   admin/                        Admin-Seiten (Login, Werke, Editor, Inhalte)

@@ -1,0 +1,6 @@
+# Blocks all direct HTTP access to this folder, wherever it ends up on disk.
+# inc/ is meant to be reached only via PHP require/include from public/api/**.php,
+# never requested directly — this rule is what makes that safe even if a hosting
+# account's FTP is jailed to htdocs/ and inc/ has to be uploaded inside it instead
+# of as a sibling folder.
+Require all denied
