@@ -1,0 +1,22 @@
+/* Self-hosted Google Fonts (latin subset only — covers German umlauts/ß) —
+   replaces loading fonts.googleapis.com/fonts.gstatic.com at request time,
+   so no visitor IP address is ever transmitted to Google. Only the two
+   families actually used by the site (--font-heading/--font-body in
+   tokens.css) are included — Spectral was an alternative in the original
+   design reference but isn't referenced anywhere in this build. */
+
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/hanken-grotesk-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 300 600;
+  font-display: swap;
+  src: url('/fonts/jost-latin.woff2') format('woff2');
+}

@@ -12,6 +12,7 @@ while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
 require_once $__bootstrapDir . '/inc/bootstrap.php';
 require_once $__bootstrapDir . '/inc/order_builder.php';
 require_once $__bootstrapDir . '/inc/mailer.php';
+require_once $__bootstrapDir . '/inc/email_templates.php';
 
 // No live payment processor — the order is created "pending" and the customer
 // receives the bank details by email; the admin reconciles payment manually and
@@ -31,18 +32,27 @@ if (isset($cust['error'])) {
 try {
     $created = create_pending_order(get_db(), $li['lineItems'], $li['totalCents'], $cust['customer'], 'invoice');
 
-    $lines = implode("\n", array_map(
-        static fn (array $x) => "{$x['qty']}× {$x['title']} — " . fmt_euro($x['unitPriceCents'] * $x['qty']),
-        $li['lineItems']
-    ));
-    $bankHolder = env('BANK_HOLDER', '');
-    $bankIban = env('BANK_IBAN', '');
-    $bankBic = env('BANK_BIC', '');
-    send_mail(
-        $cust['customer']['email'],
-        "Bestellung {$created['orderNumber']} — Zahlung per Überweisung",
-        "Hallo {$cust['customer']['firstName']},\n\ndanke für deine Bestellung!\n\n$lines\n\nGesamt: " . fmt_euro($li['totalCents']) . "\nBestellnummer: {$created['orderNumber']}\n\nBitte überweise den Betrag unter Angabe der Bestellnummer an:\n$bankHolder\nIBAN: $bankIban\nBIC: $bankBic\n\nDer Versand erfolgt nach Zahlungseingang."
+    $email = build_order_confirmation_email(
+        [
+            'orderNumber' => $created['orderNumber'],
+            'firstName' => $cust['customer']['firstName'],
+            'lastName' => $cust['customer']['lastName'],
+            'email' => $cust['customer']['email'],
+            'street' => $cust['customer']['street'],
+            'zip' => $cust['customer']['zip'],
+            'city' => $cust['customer']['city'],
+            'totalCents' => $li['totalCents'],
+            'paymentMethod' => 'invoice',
+            'status' => 'pending',
+        ],
+        $li['lineItems'],
+        [
+            'bankHolder' => env('BANK_HOLDER', ''),
+            'bankIban' => env('BANK_IBAN', ''),
+            'bankBic' => env('BANK_BIC', ''),
+        ]
     );
+    send_mail($cust['customer']['email'], $email['subject'], $email['text'], $email['html']);
 
     json_response(['orderNumber' => $created['orderNumber'], 'orderId' => $created['orderId']]);
 } catch (Throwable $e) {

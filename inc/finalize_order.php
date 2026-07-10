@@ -1,6 +1,11 @@
 <?php
 declare(strict_types=1);
 
+// Same-directory requires (not path-resolution-sensitive like inc/bootstrap.php itself) —
+// finalize_order_paid() depends on both directly, regardless of what its callers already loaded.
+require_once __DIR__ . '/mailer.php';
+require_once __DIR__ . '/email_templates.php';
+
 /**
  * Called only after a payment provider has confirmed the charge (Stripe webhook,
  * PayPal capture). Marks the order paid and takes unique (one-of-a-kind) works off
@@ -40,15 +45,25 @@ function finalize_order_paid(PDO $pdo, int $orderId): ?array
     $stmt->execute(['id' => $orderId]);
     $updated = $stmt->fetch();
 
-    $lines = implode("\n", array_map(
-        static fn (array $i) => "{$i['qty']}× {$i['title']} — " . fmt_euro((int) $i['unit_price_cents'] * (int) $i['qty']),
-        $items
-    ));
-    send_mail(
-        $updated['email'],
-        "Bestellbestätigung {$updated['order_number']}",
-        "Hallo {$updated['first_name']},\n\nvielen Dank für deine Bestellung!\n\n$lines\n\nGesamt: " . fmt_euro((int) $updated['total_cents']) . "\nBestellnummer: {$updated['order_number']}\n\nWir melden uns mit dem Versand."
-    );
+    $emailItems = array_map(static fn (array $i) => [
+        'title' => $i['title'],
+        'metaLine' => $i['meta_line'],
+        'unitPriceCents' => (int) $i['unit_price_cents'],
+        'qty' => (int) $i['qty'],
+    ], $items);
+    $email = build_order_confirmation_email([
+        'orderNumber' => $updated['order_number'],
+        'firstName' => $updated['first_name'],
+        'lastName' => $updated['last_name'],
+        'email' => $updated['email'],
+        'street' => $updated['street'],
+        'zip' => $updated['zip'],
+        'city' => $updated['city'],
+        'totalCents' => (int) $updated['total_cents'],
+        'paymentMethod' => $updated['payment_method'],
+        'status' => $updated['status'],
+    ], $emailItems);
+    send_mail($updated['email'], $email['subject'], $email['text'], $email['html']);
 
     return $updated;
 }

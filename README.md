@@ -11,6 +11,7 @@ Umgesetzt nach der Spezifikation in [`design_handoff_kunst_store/README.md`](des
 - **Auth:** native PHP-Sessions + `password_hash()`/`password_verify()`
 - **Uploads:** `move_uploaded_file()`, Dateien landen direkt im Webspace unter `public/uploads/`
 - **Frontend:** statisches HTML/CSS/Vanilla-JS unter `public/` (unverändert gegenüber der Node-Version — nur der Backend-Unterbau wurde getauscht)
+- **Fonts:** selbst gehostet unter `public/fonts/` (`public/css/fonts.css`) — keine Anfrage an Google beim Seitenaufruf, dadurch auch keine IP-Übertragung an Google (siehe Datenschutzerklärung)
 - **Zahlungen:** Stripe und PayPal werden direkt per cURL gegen die REST-APIs angesprochen (keine SDKs) — dadurch keine Composer-Abhängigkeit
 
 ## Verzeichnisstruktur — wichtig für den Upload
@@ -90,6 +91,7 @@ Siehe [`.env.example`](.env.example) für die vollständige Liste. Jede Zahlungs
 | `PAYPAL_CLIENT_ID`/`PAYPAL_CLIENT_SECRET`/`PAYPAL_ENV` | Aus dem [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications) |
 | `BANK_HOLDER`/`BANK_IBAN`/`BANK_BIC` | Bankverbindung für „Rechnung/Überweisung"-E-Mails |
 | `MAIL_ENABLED`/`MAIL_FROM`/`CONTACT_EMAIL` | E-Mail-Versand über PHPs eingebaute `mail()`-Funktion |
+| `SITE_URL` | Optional — nur nötig, falls die automatische Erkennung des Domainnamens (aus dem Request) für den Bestellung-ansehen-Link in E-Mails nicht passt |
 
 ## Zahlungsanbindung — Details
 
@@ -101,6 +103,8 @@ Siehe [`.env.example`](.env.example) für die vollständige Liste. Jede Zahlungs
 
 Nutzt PHPs eingebaute `mail()`-Funktion — auf den meisten Shared-Hosting-Paketen (inkl. Strato) für die eigene Domain ohne weitere Konfiguration lauffähig. Für zuverlässigere Zustellung (SPF/DKIM, Bounce-Handling) kann später ein SMTP-Relay über eine Bibliothek wie PHPMailer ergänzt werden — das ist bewusst nicht Teil dieses schlanken Set-ups, um ohne Composer auszukommen.
 
+**Bestellbestätigung:** Bei jedem abgeschlossenen Kauf (Stripe/PayPal sobald bezahlt, Rechnung sofort) verschickt `inc/email_templates.php` eine HTML-E-Mail im Tabellen-Layout (inline-gestylt, ohne Flexbox/Grid — kompatibel mit Outlook/Gmail/Apple Mail & Co.) plus eine Klartext-Alternative im selben `multipart/alternative`-Versand. Bei „Rechnung/Überweisung" enthält sie zusätzlich die Bankverbindung aus `BANK_*`.
+
 ## Bekannte Einschränkungen (bewusste Scope-Entscheidungen)
 
 - **Editionen ohne Stück-Ledger:** Editionswerke haben ein Label („Edition von 50"), aber keinen serverseitig gezählten Bestand — nur Unikate werden nach erfolgreicher Zahlung automatisch als „Verkauft" markiert.
@@ -110,13 +114,14 @@ Nutzt PHPs eingebaute `mail()`-Funktion — auf den meisten Shared-Hosting-Paket
 ## Projektstruktur
 
 ```
-inc/                            PHP-Includes: DB, Auth, Serializer, Stripe/PayPal-Clients, Mailer
+inc/                            PHP-Includes: DB, Auth, Serializer, Stripe/PayPal-Clients, Mailer, E-Mail-Templates
   .htaccess                     Blockiert jeden direkten HTTP-Zugriff auf diesen Ordner
 public/                         Web-Root
   api/                          JSON-Endpunkte (Storefront + Admin + Checkout + Webhook)
   admin/                        Admin-Seiten (Login, Werke, Editor, Inhalte)
-  css/ js/ img/                 Storefront-Assets
+  css/ js/ img/                 Storefront-Assets (css/fonts.css: selbst gehostete Google Fonts)
+  fonts/                        Schriftdateien (.woff2, selbst gehostet statt von Google geladen)
   uploads/                      Hochgeladene Werk-/Logo-Bilder (gitignored bis auf .gitkeep)
-  *.html                        Storefront-Seiten (Galerie, Detail, Warenkorb, Kasse, Bestätigung, Kontakt)
+  *.html                        Storefront-Seiten (Galerie, Detail, Warenkorb, Kasse, Bestätigung, Kontakt, Impressum, Datenschutz)
 design_handoff_kunst_store/     Ursprüngliche Design-Spezifikation (Referenz, kein Produktionscode)
 ```

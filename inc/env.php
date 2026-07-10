@@ -46,3 +46,22 @@ function env_bool(string $key, bool $default = false): bool
     }
     return in_array(strtolower($value), ['1', 'true', 'yes', 'on'], true);
 }
+
+/**
+ * Absolute origin (scheme + host) for building links in emails, where there's no
+ * "current page" to resolve a relative URL against. Prefers SITE_URL from .env;
+ * falls back to detecting it from the incoming request (works fine even for
+ * webhook-triggered requests, since those still carry the real Host header).
+ */
+function site_base_url(): string
+{
+    $configured = env('SITE_URL', '');
+    if ($configured !== '') {
+        return rtrim($configured, '/');
+    }
+    $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['SERVER_PORT'] ?? null) === '443')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    return ($isHttps ? 'https://' : 'http://') . $host;
+}
