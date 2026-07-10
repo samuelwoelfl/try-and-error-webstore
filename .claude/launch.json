@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "kunst-store",
-      "runtimeExecutable": "node",
-      "runtimeArgs": ["server/index.js"],
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["-S", "localhost:3000", "-t", "public"],
       "port": 3000
     }
   ]

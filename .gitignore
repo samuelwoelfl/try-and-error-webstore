@@ -1,6 +1,6 @@
-node_modules/
-data/
-uploads/
+public/uploads/*
+!public/uploads/.gitkeep
 .env
+.installed
 .DS_Store
 *.log
