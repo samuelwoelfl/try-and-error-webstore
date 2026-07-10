@@ -15,4 +15,6 @@ require_once $__bootstrapDir . '/inc/upload.php';
 require_admin();
 require_method('POST');
 
-json_response(['url' => handle_image_upload('image')]);
+// This file always lives at <webroot>/api/admin/upload.php, so two levels up is the
+// web root regardless of where inc/ was deployed (sibling of or nested inside it).
+json_response(['url' => handle_image_upload('image', dirname(__DIR__, 2))]);

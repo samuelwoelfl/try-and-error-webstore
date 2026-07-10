@@ -10,9 +10,13 @@ const UPLOAD_ALLOWED_MIME = [
 ];
 
 /**
+ * @param string $webRoot absolute path to the directory that holds index.html/uploads/
+ *                         (i.e. wherever public/'s contents were deployed to) — the caller
+ *                         computes this from its own fixed position in the api/ tree, since
+ *                         inc/'s location relative to it varies by hosting setup.
  * @return string public URL path (e.g. "/uploads/xyz.png")
  */
-function handle_image_upload(string $fieldName): string
+function handle_image_upload(string $fieldName, string $webRoot): string
 {
     if (!isset($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
         json_error('Keine Datei erhalten.', 400);
@@ -33,7 +37,7 @@ function handle_image_upload(string $fieldName): string
         json_error('Nur PNG, JPEG, WEBP oder GIF erlaubt.', 400);
     }
 
-    $uploadDir = __DIR__ . '/../public/uploads';
+    $uploadDir = $webRoot . '/uploads';
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
     }
