@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin Anmelden — Try &amp; Error</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-login view-enter">
+  <div class="admin-login__inner">
+    <div class="admin-login__brand">
+      <div class="admin-login__brand-name">Try &amp; Error</div>
+      <div class="admin-login__brand-sub">Admin · Verwaltung</div>
+    </div>
+    <div class="admin-login__card">
+      <h1 class="heading">Anmelden</h1>
+      <div id="login-error" class="form-error" hidden></div>
+      <form id="login-form">
+        <label class="field" style="margin-bottom:16px"><span class="field__label">E-Mail</span><input class="field__input" type="email" name="email" placeholder="danica@atelier.de" required></label>
+        <label class="field" style="margin-bottom:22px"><span class="field__label">Passwort</span><input class="field__input" type="password" name="password" placeholder="••••••••" required></label>
+        <button type="submit" class="btn btn--primary btn--block">Anmelden</button>
+      </form>
+    </div>
+    <div class="admin-login__note">
+      <span>🔒</span><span>Geschützter Bereich — Zugang nur mit gültigen Zugangsdaten.</span>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script>
+document.getElementById('login-form').addEventListener('submit', async (evt) => {
+  evt.preventDefault();
+  const errorEl = document.getElementById('login-error');
+  errorEl.hidden = true;
+  const fd = new FormData(evt.target);
+  try {
+    await api.adminLogin({ email: fd.get('email'), password: fd.get('password') });
+    location.href = '/admin/werke.html';
+  } catch (e) {
+    errorEl.textContent = e.message || 'Anmeldung fehlgeschlagen.';
+    errorEl.hidden = false;
+  }
+});
+
+api.adminSession().then((s) => { if (s.authed) location.href = '/admin/werke.html'; });
+</script>
+</body>
+</html>

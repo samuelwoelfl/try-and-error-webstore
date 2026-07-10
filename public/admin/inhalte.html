@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inhalte — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">
+      <div class="admin-sidebar__brand-name">Try &amp; Error</div>
+      <div class="admin-sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="admin-nav">
+      <a href="/admin/werke.html" class="admin-nav__link"><span>◇</span>Werke</a>
+      <a href="/admin/inhalte.html" class="admin-nav__link is-active"><span>✎</span>Inhalte</a>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <a href="/" target="_blank" rel="noopener">Store ansehen ↗</a>
+      <button type="button" id="logout-btn">Abmelden</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div id="admin-flash" class="admin-flash" hidden>✓ Änderungen gespeichert</div>
+    <div id="admin-error" class="admin-error-banner" hidden></div>
+
+    <div class="admin-page admin-page--content view-enter">
+      <div class="admin-kicker">Verwaltung</div>
+      <h1 style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:34px;margin:0 0 30px;line-height:1">Inhalte</h1>
+
+      <form id="content-form">
+        <div class="admin-card">
+          <h2>Branding · Logo</h2>
+          <p class="hint">Ersetzt die Wortmarke „Try &amp; Error" im Store-Header und -Footer durch dein eigenes Logo. Ohne Bild wird die Textmarke weiter angezeigt.</p>
+          <div style="display:flex;align-items:center;gap:20px">
+            <div class="image-dropzone logo-dropzone" id="logo-dropzone">
+              <span class="image-dropzone__icon">⤢</span>
+              <span class="image-dropzone__label">Logo hierher ziehen<br>oder klicken</span>
+              <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp,image/gif">
+            </div>
+            <div style="font-size:12.5px;color:var(--text-tertiary);line-height:1.7">Empfohlen: quadratisch, PNG mit transparentem Hintergrund, mind. 240×240px.</div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>Startseite · Hero</h2>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="heroTitle"></label>
+          <label class="field"><span class="field__label">Untertext</span><textarea class="field__input" name="heroSub" rows="3"></textarea></label>
+        </div>
+
+        <div class="admin-card">
+          <h2>Über mich</h2>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="aboutTitle"></label>
+          <label class="field"><span class="field__label">Text</span><textarea class="field__input" name="aboutText" rows="6"></textarea></label>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--sm">Speichern</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/js/format.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin/common.js"></script>
+<script src="/js/admin/inhalte.js"></script>
+</body>
+</html>

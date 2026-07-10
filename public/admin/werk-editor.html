@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Werk bearbeiten — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Hanken+Grotesk:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/tokens.css">
+<link rel="stylesheet" href="/css/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-sidebar__brand">
+      <div class="admin-sidebar__brand-name">Try &amp; Error</div>
+      <div class="admin-sidebar__brand-sub">Admin</div>
+    </div>
+    <nav class="admin-nav">
+      <a href="/admin/werke.html" class="admin-nav__link is-active"><span>◇</span>Werke</a>
+      <a href="/admin/inhalte.html" class="admin-nav__link"><span>✎</span>Inhalte</a>
+    </nav>
+    <div class="admin-sidebar__footer">
+      <a href="/" target="_blank" rel="noopener">Store ansehen ↗</a>
+      <button type="button" id="logout-btn">Abmelden</button>
+    </div>
+  </aside>
+
+  <div class="admin-content">
+    <div id="admin-flash" class="admin-flash" hidden>✓ Änderungen gespeichert</div>
+    <div id="admin-error" class="admin-error-banner" hidden></div>
+
+    <div class="admin-page admin-page--narrow view-enter">
+      <a href="/admin/werke.html" class="link-quiet">← Zurück zu Werke</a>
+      <h1 id="editor-title" style="font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:30px;margin:16px 0 28px">Neues Werk</h1>
+
+      <form id="editor-form">
+        <div class="editor-grid">
+          <div>
+            <span class="field__label">Werkbild</span>
+            <div class="image-dropzone" id="image-dropzone">
+              <span class="image-dropzone__icon">⤢</span>
+              <span class="image-dropzone__label">Bild hierher ziehen<br>oder klicken</span>
+              <input type="file" id="image-input" accept="image/png,image/jpeg,image/webp,image/gif">
+            </div>
+          </div>
+          <div class="editor-form-grid">
+            <label class="field field--full"><span class="field__label">Titel</span><input class="field__input" name="title" placeholder="z.B. Morgennebel" required></label>
+
+            <label class="field"><span class="field__label">Art</span>
+              <select class="field__input" name="kind">
+                <option value="unique">Unikat (1×)</option>
+                <option value="edition">Edition (mehrfach)</option>
+              </select>
+            </label>
+            <label class="field"><span class="field__label">Status</span>
+              <select class="field__input" name="status">
+                <option value="verfuegbar">Verfügbar</option>
+                <option value="verkauft">Verkauft</option>
+              </select>
+            </label>
+
+            <label class="field field--full"><span class="field__label">Technik</span><input class="field__input" name="technique" placeholder="z.B. Öl auf Leinwand"></label>
+
+            <label class="field field--full" id="edition-field" hidden><span class="field__label">Auflage</span><input class="field__input" name="editionLabel" placeholder="z.B. Edition von 50"></label>
+
+            <label class="field"><span class="field__label">Breite (cm)</span><input class="field__input" name="widthCm" type="number" placeholder="80"></label>
+            <label class="field"><span class="field__label">Höhe (cm)</span><input class="field__input" name="heightCm" type="number" placeholder="100"></label>
+
+            <label class="field"><span class="field__label">Jahr</span><input class="field__input" name="year" type="number" placeholder="2024"></label>
+            <label class="field"><span class="field__label">Preis (€)</span><input class="field__input" name="priceEuro" type="number" step="0.01" placeholder="1450"></label>
+
+            <label class="field field--full"><span class="field__label">Beschreibung</span><textarea class="field__input" name="description" rows="4" placeholder="Ein paar Worte zum Werk …"></textarea></label>
+          </div>
+        </div>
+
+        <div class="editor-actions">
+          <button type="submit" class="btn btn--primary btn--sm">Speichern</button>
+          <a href="/admin/werke.html" class="btn btn--outline btn--sm">Abbrechen</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/js/format.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/admin/common.js"></script>
+<script src="/js/admin/editor.js"></script>
+</body>
+</html>
