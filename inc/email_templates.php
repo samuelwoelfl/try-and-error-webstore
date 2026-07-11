@@ -61,9 +61,15 @@ function email_order_text(array $order, array $items, string $payLabel, ?array $
 function email_order_html(array $order, array $items, string $payLabel, ?array $bank, string $orderUrl): string
 {
     $e = static fn ($v) => htmlspecialchars((string) $v, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $fontsBaseUrl = site_base_url() . '/fonts';
 
-    $fontHead = "Georgia, 'Times New Roman', Times, serif";
-    $fontBody = "Arial, Helvetica, sans-serif";
+    // Sans-serif stacks matching the storefront (Hanken Grotesk for headings, Jost
+    // for body) — most email clients ignore @font-face entirely and fall through to
+    // the system sans-serif names, which is fine since it's the same style family.
+    // A handful (Apple/iOS Mail, some webmail) do support @font-face and will pick
+    // up the real self-hosted fonts declared below.
+    $fontHead = "'Hanken Grotesk', 'Helvetica Neue', Helvetica, Arial, sans-serif";
+    $fontBody = "'Jost', 'Helvetica Neue', Helvetica, Arial, sans-serif";
     $textColor = '#221f1c';
     $textSecondary = '#4a453f';
     $textTertiary = '#8a8075';
@@ -75,7 +81,7 @@ function email_order_html(array $order, array $items, string $payLabel, ?array $
         $itemRows .= '
         <tr>
           <td style="padding:14px 0;border-bottom:1px solid ' . $border . ';font-family:' . $fontBody . ';font-size:14px;color:' . $textColor . ';">
-            <div style="font-family:' . $fontHead . ';font-size:16px;color:' . $textColor . ';">' . $e($i['title']) . '</div>
+            <div style="font-family:' . $fontHead . ';font-weight:600;font-size:16px;color:' . $textColor . ';">' . $e($i['title']) . '</div>
             <div style="font-size:12.5px;color:' . $textTertiary . ';margin-top:3px;">' . $e($i['metaLine']) . ($i['qty'] > 1 ? ' · ' . (int) $i['qty'] . '×' : '') . '</div>
           </td>
           <td align="right" style="padding:14px 0;border-bottom:1px solid ' . $border . ';font-family:' . $fontBody . ';font-size:14px;color:' . $textColor . ';white-space:nowrap;vertical-align:top;">' . $e(fmt_euro($i['unitPriceCents'] * $i['qty'])) . '</td>
@@ -88,7 +94,7 @@ function email_order_html(array $order, array $items, string $payLabel, ?array $
         <tr><td style="padding:0 40px 32px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:' . $ivory . ';border:1px solid ' . $border . ';">
             <tr><td style="padding:22px 24px;font-family:' . $fontBody . ';font-size:13.5px;line-height:1.6;color:' . $textSecondary . ';">
-              <div style="font-family:' . $fontHead . ';font-size:15px;color:' . $textColor . ';margin-bottom:10px;">Bitte überweise den Betrag unter Angabe der Bestellnummer</div>
+              <div style="font-family:' . $fontHead . ';font-weight:600;font-size:15px;color:' . $textColor . ';margin-bottom:10px;">Bitte überweise den Betrag unter Angabe der Bestellnummer</div>
               <strong style="color:' . $textColor . ';">' . $e($bank['bankHolder']) . '</strong><br>
               IBAN: ' . $e($bank['bankIban']) . '<br>
               BIC: ' . $e($bank['bankBic']) . '<br>
@@ -106,6 +112,23 @@ function email_order_html(array $order, array $items, string $payLabel, ?array $
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>' . $e("Bestellbestätigung {$order['orderNumber']}") . '</title>
+<!--[if !mso]><!-->
+<style>
+  /* Outlook desktop (Word engine) and most webmail ignore @font-face entirely and
+     silently fall back to the sans-serif stack above — this only enhances clients
+     that do support it (Apple/iOS Mail and similar). */
+  @font-face {
+    font-family: "Hanken Grotesk";
+    font-weight: 400 700;
+    src: url("' . $e($fontsBaseUrl) . '/hanken-grotesk-latin.woff2") format("woff2");
+  }
+  @font-face {
+    font-family: "Jost";
+    font-weight: 300 600;
+    src: url("' . $e($fontsBaseUrl) . '/jost-latin.woff2") format("woff2");
+  }
+</style>
+<!--<![endif]-->
 </head>
 <body style="margin:0;padding:0;background-color:' . $ivory . ';">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:' . $ivory . ';">
@@ -120,7 +143,7 @@ function email_order_html(array $order, array $items, string $payLabel, ?array $
 
   <tr><td style="padding:40px 40px 8px;text-align:center;">
     <div style="font-family:' . $fontBody . ';font-size:26px;color:' . $textColor . ';">&#10003;</div>
-    <div style="font-family:' . $fontHead . ';font-size:26px;color:' . $textColor . ';padding-top:10px;">Vielen Dank!</div>
+    <div style="font-family:' . $fontHead . ';font-weight:600;font-size:26px;color:' . $textColor . ';padding-top:10px;">Vielen Dank!</div>
     <div style="font-family:' . $fontBody . ';font-size:14.5px;line-height:1.6;color:' . $textSecondary . ';padding-top:10px;">Hallo ' . $e($order['firstName']) . ', deine Bestellung ist bei uns eingegangen.</div>
   </td></tr>
 
@@ -137,8 +160,8 @@ function email_order_html(array $order, array $items, string $payLabel, ?array $
         <td align="right" style="padding:12px 0 0;font-family:' . $fontBody . ';font-size:13.5px;color:' . $textTertiary . ';">inklusive</td>
       </tr>
       <tr>
-        <td style="padding:14px 0 24px;border-top:1px solid ' . $border . ';margin-top:10px;font-family:' . $fontHead . ';font-size:19px;color:' . $textColor . ';padding-top:14px;">Gesamt</td>
-        <td align="right" style="padding:14px 0 24px;border-top:1px solid ' . $border . ';font-family:' . $fontHead . ';font-size:19px;color:' . $textColor . ';padding-top:14px;">' . $e(fmt_euro($order['totalCents'])) . '</td>
+        <td style="padding:14px 0 24px;border-top:1px solid ' . $border . ';margin-top:10px;font-family:' . $fontHead . ';font-weight:600;font-size:19px;color:' . $textColor . ';padding-top:14px;">Gesamt</td>
+        <td align="right" style="padding:14px 0 24px;border-top:1px solid ' . $border . ';font-family:' . $fontHead . ';font-weight:600;font-size:19px;color:' . $textColor . ';padding-top:14px;">' . $e(fmt_euro($order['totalCents'])) . '</td>
       </tr>
     </table>
   </td></tr>
