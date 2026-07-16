@@ -60,6 +60,7 @@ function fillForm(work) {
   form.year.value = work.year || '';
   form.priceEuro.value = work.priceCents ? (work.priceCents / 100) : '';
   form.description.value = work.description || '';
+  form.isHidden.checked = !!work.isHidden;
   currentImageUrl = work.imageUrl || null;
   setDropzoneImage(currentImageUrl);
   toggleEditionField();
@@ -80,6 +81,7 @@ function readForm() {
     priceEuro: fd.get('priceEuro'),
     description: fd.get('description')?.trim(),
     imageUrl: currentImageUrl,
+    isHidden: form.isHidden.checked,
   };
 }
 

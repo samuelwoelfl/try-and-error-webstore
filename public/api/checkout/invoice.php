@@ -29,22 +29,36 @@ if (isset($cust['error'])) {
     json_error($cust['error']);
 }
 
+$pdo = get_db();
 try {
-    $created = create_pending_order(get_db(), $li['lineItems'], $li['totalCents'], $cust['customer'], 'invoice');
+    $created = create_pending_order($pdo, $li['lineItems'], $li['totalCents'], $cust['customer'], 'invoice');
+} catch (Throwable $e) {
+    error_log('[checkout/invoice] ' . $e->getMessage());
+    json_error('Bestellung konnte nicht angelegt werden.', 500);
+}
+
+// The order already exists in the DB at this point, so a mail hiccup below must
+// never turn into an error response — the customer would think checkout failed
+// and could re-order, while the original order sits there unnoticed.
+try {
+    $orderForEmail = [
+        'orderNumber' => $created['orderNumber'],
+        'firstName' => $cust['customer']['firstName'],
+        'lastName' => $cust['customer']['lastName'],
+        'email' => $cust['customer']['email'],
+        'street' => $cust['customer']['street'],
+        'zip' => $cust['customer']['zip'],
+        'city' => $cust['customer']['city'],
+        'totalCents' => $li['totalCents'],
+        'paymentMethod' => 'invoice',
+        'status' => 'pending',
+    ];
+
+    $settings = $pdo->query('SELECT order_sender_name, order_sender_email, order_notification_email FROM settings WHERE id = 1')->fetch();
+    $senderFrom = build_mail_from($settings['order_sender_name'] ?? null, $settings['order_sender_email'] ?? null);
 
     $email = build_order_confirmation_email(
-        [
-            'orderNumber' => $created['orderNumber'],
-            'firstName' => $cust['customer']['firstName'],
-            'lastName' => $cust['customer']['lastName'],
-            'email' => $cust['customer']['email'],
-            'street' => $cust['customer']['street'],
-            'zip' => $cust['customer']['zip'],
-            'city' => $cust['customer']['city'],
-            'totalCents' => $li['totalCents'],
-            'paymentMethod' => 'invoice',
-            'status' => 'pending',
-        ],
+        $orderForEmail,
         $li['lineItems'],
         [
             'bankHolder' => env('BANK_HOLDER', ''),
@@ -52,10 +66,15 @@ try {
             'bankBic' => env('BANK_BIC', ''),
         ]
     );
-    send_mail($cust['customer']['email'], $email['subject'], $email['text'], $email['html']);
+    send_mail($cust['customer']['email'], $email['subject'], $email['text'], $email['html'], $senderFrom);
 
-    json_response(['orderNumber' => $created['orderNumber'], 'orderId' => $created['orderId']]);
+    $notifyTo = $settings['order_notification_email'] ?: env('ADMIN_EMAIL');
+    if ($notifyTo) {
+        $notification = build_order_notification_email($orderForEmail, $li['lineItems']);
+        send_mail($notifyTo, $notification['subject'], $notification['text'], $notification['html'], $senderFrom);
+    }
 } catch (Throwable $e) {
-    error_log('[checkout/invoice] ' . $e->getMessage());
-    json_error('Bestellung konnte nicht angelegt werden.', 500);
+    error_log("[checkout/invoice] Mailversand für Bestellung {$created['orderNumber']} fehlgeschlagen: " . $e->getMessage());
 }
+
+json_response(['orderNumber' => $created['orderNumber'], 'orderId' => $created['orderId']]);

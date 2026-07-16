@@ -20,21 +20,43 @@ function workCardHtml(w) {
 async function initGallery() {
   const grid = document.getElementById('works-grid');
   const countEl = document.getElementById('work-count');
+  let workCount = null;
   try {
     const works = await api.works();
     grid.innerHTML = works.map(workCardHtml).join('');
-    countEl.textContent = `${works.length} Arbeiten`;
+    workCount = works.length;
   } catch (e) {
     grid.innerHTML = `<p class="center-note">Werke konnten nicht geladen werden.</p>`;
   }
 
   try {
     const settings = await api.settings();
+    if (settings.heroEyebrow) {
+      document.getElementById('hero-eyebrow').textContent = settings.heroEyebrow;
+    }
     if (settings.heroTitle) {
       document.getElementById('hero-title').textContent = settings.heroTitle;
     }
     if (settings.heroSub) {
       document.getElementById('hero-sub').textContent = settings.heroSub;
+    }
+    if (settings.heroImageAUrl) {
+      document.getElementById('hero-img-a').src = settings.heroImageAUrl;
+    }
+    if (settings.heroImageBUrl) {
+      document.getElementById('hero-img-b').src = settings.heroImageBUrl;
+    }
+    if (settings.worksEyebrow) {
+      document.getElementById('works-eyebrow').textContent = settings.worksEyebrow;
+    }
+    if (settings.worksTitle) {
+      document.getElementById('works-title').textContent = settings.worksTitle;
+    }
+    if (workCount !== null) {
+      countEl.textContent = `${workCount} ${settings.worksCountLabel || 'Arbeiten'}`;
+    }
+    if (settings.aboutEyebrow) {
+      document.getElementById('about-eyebrow').textContent = settings.aboutEyebrow;
     }
     if (settings.aboutTitle) {
       document.getElementById('about-title').textContent = settings.aboutTitle;
@@ -45,8 +67,16 @@ async function initGallery() {
         .map((p) => `<p class="about-strip__text">${escapeHtml(p).replace(/\n/g, '<br>')}</p>`)
         .join('');
     }
+    if (settings.aboutImageUrl) {
+      const portrait = document.getElementById('about-portrait');
+      portrait.classList.remove('stripe-placeholder');
+      portrait.innerHTML = `<img src="${escapeHtml(settings.aboutImageUrl)}" alt="${escapeHtml(settings.aboutTitle || 'Über das Projekt')}">`;
+    }
   } catch (e) {
     // Falls back to the static defaults already in the markup.
+    if (workCount !== null) {
+      countEl.textContent = `${workCount} Arbeiten`;
+    }
   }
 }
 

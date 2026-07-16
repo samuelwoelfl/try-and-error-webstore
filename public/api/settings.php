@@ -12,4 +12,4 @@ while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
 require_once $__bootstrapDir . '/inc/bootstrap.php';
 
 $row = get_db()->query('SELECT * FROM settings WHERE id = 1')->fetch();
-json_response(serialize_settings($row));
+json_response(serialize_settings_public($row));

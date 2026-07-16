@@ -9,15 +9,17 @@ declare(strict_types=1);
  * @param string|null $html Optional HTML body. When given, sends a multipart/alternative
  *                           message (plain text + HTML) built by hand — no PHPMailer/Composer
  *                           dependency, same reasoning as the rest of this codebase.
+ * @param string|null $from Optional sender override (e.g. the admin-configured order
+ *                          sender address) — falls back to MAIL_FROM from .env.
  */
-function send_mail(string $to, string $subject, string $text, ?string $html = null): bool
+function send_mail(string $to, string $subject, string $text, ?string $html = null, ?string $from = null): bool
 {
     if (!env_bool('MAIL_ENABLED', true)) {
         error_log("[mailer] MAIL_ENABLED=false — E-Mail an $to nur geloggt.\nBetreff: $subject\n$text");
         return false;
     }
 
-    $from = env('MAIL_FROM', 'no-reply@example.com');
+    $from = $from ?: env('MAIL_FROM', 'no-reply@example.com');
     $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
     if ($html === null) {
@@ -49,4 +51,22 @@ function send_mail(string $to, string $subject, string $text, ?string $html = nu
         error_log("[mailer] Versand an $to fehlgeschlagen.\nBetreff: $subject\n$text");
     }
     return $ok;
+}
+
+/**
+ * Combines the admin-configured order sender name/email into a single "From" header
+ * value (MIME-encoded so umlauts etc. survive) — returns null if no sender email is
+ * configured, so callers can fall back to MAIL_FROM from .env via send_mail()'s default.
+ */
+function build_mail_from(?string $name, ?string $email): ?string
+{
+    $email = trim((string) $email);
+    if ($email === '') {
+        return null;
+    }
+    $name = trim((string) $name);
+    if ($name === '') {
+        return $email;
+    }
+    return '=?UTF-8?B?' . base64_encode($name) . '?= <' . $email . '>';
 }

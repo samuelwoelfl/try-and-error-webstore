@@ -33,7 +33,7 @@ if ($method === 'PUT') {
     $pdo->prepare("
         UPDATE works SET title=:title, technique=:technique, width_cm=:width_cm, height_cm=:height_cm,
             year=:year, price_cents=:price_cents, kind=:kind, edition_label=:edition_label, status=:status,
-            description=:description, image_url=:image_url
+            description=:description, image_url=:image_url, is_hidden=:is_hidden
         WHERE id=:id
     ")->execute($rec);
 

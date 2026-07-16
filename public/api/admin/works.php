@@ -26,8 +26,8 @@ if ($method === 'POST') {
     $rec['sort_order'] = $maxSort + 1;
 
     $pdo->prepare("
-        INSERT INTO works (title, technique, width_cm, height_cm, year, price_cents, kind, edition_label, status, description, image_url, sort_order)
-        VALUES (:title, :technique, :width_cm, :height_cm, :year, :price_cents, :kind, :edition_label, :status, :description, :image_url, :sort_order)
+        INSERT INTO works (title, technique, width_cm, height_cm, year, price_cents, kind, edition_label, status, description, image_url, sort_order, is_hidden)
+        VALUES (:title, :technique, :width_cm, :height_cm, :year, :price_cents, :kind, :edition_label, :status, :description, :image_url, :sort_order, :is_hidden)
     ")->execute($rec);
     $id = (int) $pdo->lastInsertId();
 

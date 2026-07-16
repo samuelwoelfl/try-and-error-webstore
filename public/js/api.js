@@ -34,9 +34,15 @@ const api = {
   adminCreateWork: (body) => apiRequest('/api/admin/works.php', { method: 'POST', body: JSON.stringify(body) }),
   adminUpdateWork: (id, body) => apiRequest(`/api/admin/work.php?id=${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(body) }),
   adminToggleStatus: (id) => apiRequest(`/api/admin/work-status.php?id=${encodeURIComponent(id)}`, { method: 'PATCH' }),
+  adminToggleVisibility: (id) => apiRequest(`/api/admin/work-visibility.php?id=${encodeURIComponent(id)}`, { method: 'PATCH' }),
   adminDeleteWork: (id) => apiRequest(`/api/admin/work.php?id=${encodeURIComponent(id)}`, { method: 'DELETE' }),
   adminSettings: () => apiRequest('/api/admin/settings.php'),
   adminUpdateSettings: (body) => apiRequest('/api/admin/settings.php', { method: 'PUT', body: JSON.stringify(body) }),
+  adminOrders: () => apiRequest('/api/admin/orders.php'),
+  adminCancelOrder: (id) => apiRequest(`/api/admin/order-status.php?id=${encodeURIComponent(id)}`, { method: 'PATCH' }),
+  adminDeleteOrder: (id) => apiRequest(`/api/admin/order.php?id=${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  adminToggleOrderFulfilled: (id) => apiRequest(`/api/admin/order-fulfillment.php?id=${encodeURIComponent(id)}`, { method: 'PATCH' }),
+  adminToggleOrderPaid: (id) => apiRequest(`/api/admin/order-payment.php?id=${encodeURIComponent(id)}`, { method: 'PATCH' }),
   adminUpload: (file) => {
     const fd = new FormData();
     fd.append('image', file);

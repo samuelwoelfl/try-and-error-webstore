@@ -11,5 +11,17 @@ while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
 }
 require_once $__bootstrapDir . '/inc/bootstrap.php';
 
-$rows = get_db()->query("SELECT * FROM works WHERE is_hidden = 0 ORDER BY sort_order ASC, id ASC")->fetchAll();
-json_response(array_map('serialize_work', $rows));
+require_admin();
+require_method('DELETE');
+
+$id = require_query('id');
+$pdo = get_db();
+
+// order_items has ON DELETE CASCADE on order_id, so its rows go with it automatically.
+$stmt = $pdo->prepare('DELETE FROM orders WHERE id = :id');
+$stmt->execute(['id' => $id]);
+if ($stmt->rowCount() === 0) {
+    json_error('Bestellung nicht gefunden.', 404);
+}
+
+json_response(['ok' => true]);

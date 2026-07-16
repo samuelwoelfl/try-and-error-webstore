@@ -58,6 +58,61 @@ function email_order_text(array $order, array $items, string $payLabel, ?array $
     return $out;
 }
 
+/**
+ * Internal "you've got a sale" notification for the shop owner — sent alongside the
+ * buyer confirmation so she knows what was ordered and where it needs to ship,
+ * without having to check the admin orders list proactively.
+ *
+ * @param array $order ['orderNumber','firstName','lastName','email','street','zip','city','totalCents','paymentMethod','status']
+ * @param array $items list of ['title','metaLine','unitPriceCents','qty']
+ * @return array{subject: string, text: string, html: string}
+ */
+function build_order_notification_email(array $order, array $items): array
+{
+    $payLabels = [
+        'stripe' => 'Kredit-/Debitkarte',
+        'paypal' => 'PayPal',
+        'invoice' => 'Rechnung / Überweisung',
+    ];
+    $payLabel = $payLabels[$order['paymentMethod']] ?? $order['paymentMethod'];
+    $statusLabel = $order['status'] === 'paid' ? 'Bezahlt' : 'Ausstehend (Rechnung)';
+    $subject = "Neue Bestellung {$order['orderNumber']} — Try & Error";
+
+    $itemLines = array_map(
+        static fn (array $i) => "{$i['qty']}× {$i['title']} ({$i['metaLine']}) — " . fmt_euro($i['unitPriceCents'] * $i['qty']),
+        $items
+    );
+
+    $text = "Neue Bestellung eingegangen.\n\n";
+    $text .= "Bestellnummer: {$order['orderNumber']}\n";
+    $text .= "Status: $statusLabel\n";
+    $text .= "Zahlungsart: $payLabel\n\n";
+    $text .= implode("\n", $itemLines) . "\n\n";
+    $text .= "Gesamt: " . fmt_euro($order['totalCents']) . "\n\n";
+    $text .= "Kunde:\n{$order['firstName']} {$order['lastName']}\n{$order['email']}\n\n";
+    $text .= "Lieferadresse:\n{$order['street']}\n{$order['zip']} {$order['city']}\n";
+
+    $e = static fn ($v) => htmlspecialchars((string) $v, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $itemRows = '';
+    foreach ($items as $i) {
+        $itemRows .= '<tr><td style="padding:6px 0;">' . (int) $i['qty'] . '× ' . $e($i['title']) . ' (' . $e($i['metaLine']) . ')</td>'
+            . '<td align="right" style="padding:6px 0;white-space:nowrap;">' . $e(fmt_euro($i['unitPriceCents'] * $i['qty'])) . '</td></tr>';
+    }
+
+    $html = '<div style="font-family:Helvetica,Arial,sans-serif;font-size:14px;color:#221f1c;max-width:560px;">'
+        . '<h2 style="font-size:18px;margin:0 0 16px;">Neue Bestellung eingegangen</h2>'
+        . '<p style="margin:0 0 4px;"><strong>Bestellnummer:</strong> ' . $e($order['orderNumber']) . '</p>'
+        . '<p style="margin:0 0 4px;"><strong>Status:</strong> ' . $e($statusLabel) . '</p>'
+        . '<p style="margin:0 0 16px;"><strong>Zahlungsart:</strong> ' . $e($payLabel) . '</p>'
+        . '<table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #e5e1da;border-bottom:1px solid #e5e1da;margin-bottom:16px;">' . $itemRows . '</table>'
+        . '<p style="margin:0 0 16px;"><strong>Gesamt:</strong> ' . $e(fmt_euro($order['totalCents'])) . '</p>'
+        . '<p style="margin:0 0 4px;"><strong>Kunde:</strong> ' . $e($order['firstName'] . ' ' . $order['lastName']) . ' · ' . $e($order['email']) . '</p>'
+        . '<p style="margin:0;"><strong>Lieferadresse:</strong><br>' . $e($order['street']) . '<br>' . $e($order['zip'] . ' ' . $order['city']) . '</p>'
+        . '</div>';
+
+    return ['subject' => $subject, 'text' => $text, 'html' => $html];
+}
+
 function email_order_html(array $order, array $items, string $payLabel, ?array $bank, string $orderUrl): string
 {
     $e = static fn ($v) => htmlspecialchars((string) $v, ENT_QUOTES | ENT_HTML5, 'UTF-8');

@@ -20,6 +20,7 @@
     </div>
     <nav class="admin-nav">
       <a href="/admin/werke.html" class="admin-nav__link"><span>◇</span>Werke</a>
+      <a href="/admin/bestellungen.html" class="admin-nav__link"><span>⚑</span>Bestellungen</a>
       <a href="/admin/inhalte.html" class="admin-nav__link is-active"><span>✎</span>Inhalte</a>
     </nav>
     <div class="admin-sidebar__footer">
@@ -29,7 +30,7 @@
   </aside>
 
   <div class="admin-content">
-    <div id="admin-flash" class="admin-flash" hidden>✓ Änderungen gespeichert</div>
+    <div id="admin-flash" class="admin-flash">✓ Änderungen gespeichert</div>
     <div id="admin-error" class="admin-error-banner" hidden></div>
 
     <div class="admin-page admin-page--content view-enter">
@@ -38,28 +39,53 @@
 
       <form id="content-form">
         <div class="admin-card">
-          <h2>Branding · Logo</h2>
-          <p class="hint">Ersetzt die Wortmarke „Try &amp; Error" im Store-Header und -Footer durch dein eigenes Logo. Ohne Bild wird die Textmarke weiter angezeigt.</p>
-          <div style="display:flex;align-items:center;gap:20px">
-            <div class="image-dropzone logo-dropzone" id="logo-dropzone">
+          <h2>Startseite · Hero</h2>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Eyebrow (kleiner Text über der Überschrift)</span><input class="field__input" name="heroEyebrow"></label>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="heroTitle"></label>
+          <label class="field" style="margin-bottom:22px"><span class="field__label">Untertext</span><textarea class="field__input" name="heroSub" rows="3"></textarea></label>
+          <p class="hint">Die beiden Bilder oben auf der Startseite. Ohne eigenes Bild bleibt die Platzhaltergrafik sichtbar.</p>
+          <div style="display:flex;gap:20px;flex-wrap:wrap">
+            <div class="image-dropzone content-image-dropzone" id="hero-a-dropzone">
               <span class="image-dropzone__icon">⤢</span>
-              <span class="image-dropzone__label">Logo hierher ziehen<br>oder klicken</span>
-              <input type="file" id="logo-input" accept="image/png,image/jpeg,image/webp,image/gif">
+              <span class="image-dropzone__label">Bild 1<br>hierher ziehen<br>oder klicken</span>
+              <input type="file" id="hero-a-input" accept="image/png,image/jpeg,image/webp,image/gif">
             </div>
-            <div style="font-size:12.5px;color:var(--text-tertiary);line-height:1.7">Empfohlen: quadratisch, PNG mit transparentem Hintergrund, mind. 240×240px.</div>
+            <div class="image-dropzone content-image-dropzone" id="hero-b-dropzone">
+              <span class="image-dropzone__icon">⤢</span>
+              <span class="image-dropzone__label">Bild 2<br>hierher ziehen<br>oder klicken</span>
+              <input type="file" id="hero-b-input" accept="image/png,image/jpeg,image/webp,image/gif">
+            </div>
           </div>
         </div>
 
         <div class="admin-card">
-          <h2>Startseite · Hero</h2>
-          <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="heroTitle"></label>
-          <label class="field"><span class="field__label">Untertext</span><textarea class="field__input" name="heroSub" rows="3"></textarea></label>
+          <h2>Werke-Sektion</h2>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Eyebrow</span><input class="field__input" name="worksEyebrow"></label>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="worksTitle"></label>
+          <label class="field"><span class="field__label">Zähler-Label (z. B. „Arbeiten" in „7 Arbeiten")</span><input class="field__input" name="worksCountLabel"></label>
         </div>
 
         <div class="admin-card">
-          <h2>Über mich</h2>
+          <h2>Über das Projekt</h2>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Eyebrow</span><input class="field__input" name="aboutEyebrow"></label>
           <label class="field" style="margin-bottom:16px"><span class="field__label">Überschrift</span><input class="field__input" name="aboutTitle"></label>
-          <label class="field"><span class="field__label">Text</span><textarea class="field__input" name="aboutText" rows="6"></textarea></label>
+          <label class="field" style="margin-bottom:22px"><span class="field__label">Text</span><textarea class="field__input" name="aboutText" rows="6"></textarea></label>
+          <p class="hint">Bild unten bei „Über das Projekt".</p>
+          <div class="image-dropzone content-image-dropzone" id="about-dropzone">
+            <span class="image-dropzone__icon">⤢</span>
+            <span class="image-dropzone__label">Bild hierher ziehen<br>oder klicken</span>
+            <input type="file" id="about-input" accept="image/png,image/jpeg,image/webp,image/gif">
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>Bestell-E-Mails</h2>
+          <p class="hint">Bei jeder Bestellung geht automatisch eine Bestätigung an die Käuferin/den Käufer und eine Benachrichtigung an dich raus.</p>
+          <label class="field" style="margin-bottom:16px"><span class="field__label">Benachrichtigungs-E-Mail (an dich, bei neuer Bestellung)</span><input class="field__input" type="email" name="orderNotificationEmail" placeholder="du@deine-domain.de"></label>
+          <div class="editor-form-grid" style="margin-bottom:6px">
+            <label class="field"><span class="field__label">Absender-Name (für Bestellbestätigungen an Käufer:innen)</span><input class="field__input" name="orderSenderName" placeholder="Try & Error"></label>
+            <label class="field"><span class="field__label">Absender-E-Mail</span><input class="field__input" type="email" name="orderSenderEmail" placeholder="no-reply@deine-domain.de"></label>
+          </div>
         </div>
 
         <button type="submit" class="btn btn--primary btn--sm">Speichern</button>

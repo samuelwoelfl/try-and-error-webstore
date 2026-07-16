@@ -24,18 +24,24 @@
 .admin-sidebar__footer a, .admin-sidebar__footer button {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px; font-size: 13px; color: var(--text-secondary);
   background: none; border: none; cursor: pointer; font-family: inherit; text-align: left; width: 100%;
+  white-space: nowrap;
 }
 .admin-sidebar__footer button:hover, .admin-sidebar__footer a:hover { color: var(--accent); }
 
 .admin-content { position: relative; overflow-y: auto; max-height: 100vh; }
 .admin-flash {
-  position: sticky; top: 0; z-index: 20;
+  position: fixed; left: 50%; bottom: 28px; z-index: 50;
   display: flex; align-items: center; gap: 9px;
-  padding: 12px 32px;
-  background: color-mix(in srgb, var(--accent) 12%, #fff);
-  border-bottom: 1px solid color-mix(in srgb, var(--accent) 30%, #fff);
-  font-size: 13.5px; color: var(--text-secondary);
+  padding: 12px 22px;
+  background: #221f1c; color: #fff;
+  border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+  font-size: 13.5px;
+  opacity: 0; pointer-events: none;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
+.admin-flash.is-visible { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .admin-error-banner {
   padding: 12px 32px; background: rgba(176,106,95,.1); border-bottom: 1px solid rgba(176,106,95,.3);
   font-size: 13.5px; color: var(--status-danger-text);
@@ -50,7 +56,7 @@
 
 .admin-table { background: var(--surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-panel-lg); overflow: hidden; }
 .admin-table__head, .admin-table__row {
-  display: grid; grid-template-columns: 64px 1.6fr 1.4fr 0.8fr 0.9fr 96px;
+  display: grid; grid-template-columns: 64px 1.6fr 1.4fr 0.8fr 0.9fr 128px;
   gap: 16px; align-items: center; padding: 14px 22px;
 }
 .admin-table__head {
@@ -64,12 +70,34 @@
 .admin-table__title { font-family: var(--font-heading); font-size: 17px; }
 .admin-table__meta { font-size: 12px; color: var(--text-tertiary); margin-top: 2px; }
 .admin-table__technique, .admin-table__price { font-size: 14px; color: var(--text-secondary); }
-.admin-table__actions { display: flex; gap: 14px; justify-content: flex-end; }
-.admin-table__actions button { cursor: pointer; font-size: 12.5px; background: none; border: none; font-family: inherit; padding: 0; }
-.admin-table__actions button:hover { text-decoration: underline; }
+.admin-table__actions { display: flex; gap: 6px; justify-content: flex-end; }
+.admin-table__actions a, .admin-table__actions button {
+  cursor: pointer; background: none; border: none; font-family: inherit; padding: 6px;
+  display: inline-flex; align-items: center; justify-content: center; line-height: 0;
+  border-radius: 4px; transition: background-color 0.15s;
+}
+.admin-table__actions a:hover, .admin-table__actions button:hover { background: var(--input-bg); }
 .admin-table__edit { color: var(--accent); }
 .admin-table__delete { color: var(--status-danger-text); }
+.admin-table__cancel { color: var(--text-tertiary); }
+.admin-table__eye { color: var(--text-secondary); }
+.admin-table__row--hidden { opacity: 0.55; }
 .admin-table__empty { padding: 40px 22px; text-align: center; color: var(--text-tertiary); font-size: 14px; }
+
+.admin-table--orders .admin-table__head, .admin-table--orders .admin-table__row {
+  grid-template-columns: 120px 1.15fr 1fr 1.3fr 0.7fr 125px 110px 84px;
+  align-items: start;
+}
+.admin-table--orders .pill { justify-self: start; }
+.admin-table__payment-col { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.pill--order-paid { background: var(--status-available-bg); color: var(--status-available-text); }
+.pill--order-pending { background: rgba(138, 128, 117, 0.14); color: var(--text-secondary); }
+.pill--order-cancelled { background: rgba(34, 31, 28, 0.06); color: var(--text-tertiary); }
+.pill--order-failed { background: rgba(176, 106, 95, 0.12); color: var(--status-danger-text); }
+.pill--checkbox { cursor: pointer; gap: 6px; user-select: none; }
+.pill--checkbox input[type="checkbox"] { margin: 0; cursor: pointer; accent-color: currentColor; }
+.pill--tag-icon { gap: 5px; }
+.pill--tag-icon svg { flex: none; }
 
 .admin-card { background: var(--surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-panel-lg); padding: 28px; margin-bottom: 22px; }
 .admin-card h2 { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 18px; margin: 0 0 18px; }
@@ -97,6 +125,7 @@
 .image-dropzone input[type="file"] { display: none; }
 
 .logo-dropzone { width: 120px; height: 120px; flex: none; }
+.content-image-dropzone { width: 140px; height: 175px; flex: none; }
 
 .editor-actions { display: flex; gap: 12px; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border); }
 
@@ -110,9 +139,16 @@
   .admin-sidebar__brand { padding: 0 12px 0 0; }
   .admin-nav { flex-direction: row; }
   .admin-sidebar__footer { margin-top: 0; margin-left: auto; flex-direction: row; padding-top: 0; border-top: none; }
+  .admin-sidebar__footer a, .admin-sidebar__footer button { width: auto; white-space: nowrap; }
   .admin-content { max-height: none; }
   .admin-page { padding: 24px 18px; }
   .admin-table { overflow-x: auto; }
-  .admin-table__head, .admin-table__row { grid-template-columns: 64px 1.6fr 1.4fr 0.8fr 0.9fr 96px; width: max-content; min-width: 100%; }
+  /* Fixed px tracks (not fr) here on purpose: with `width: max-content`, `fr` tracks
+     size against each row's own content instead of a shared table width, so the
+     header and data rows drift out of alignment. Fixed lengths size identically
+     everywhere, keeping header and rows lined up while still allowing horizontal
+     scroll on narrow viewports. */
+  .admin-table__head, .admin-table__row { grid-template-columns: 64px 230px 170px 100px 120px 128px; width: max-content; min-width: 100%; }
+  .admin-table--orders .admin-table__head, .admin-table--orders .admin-table__row { grid-template-columns: 120px 200px 170px 220px 110px 125px 110px 84px; }
   .editor-grid, .form-grid, .editor-form-grid { grid-template-columns: 1fr; }
 }

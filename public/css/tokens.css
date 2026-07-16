@@ -3,7 +3,7 @@
 :root {
   /* Colors — "Weiß" mode (default) */
   --bg: #ffffff;
-  --bg-ivory: #F6F3EE; /* about strip / checkout summary panel */
+  --bg-ivory: #FAFAF9; /* about strip / checkout summary panel */
   --surface: #fafafa;
   --input-bg: #ffffff;
   --header-bg: rgba(255, 255, 255, 0.85);

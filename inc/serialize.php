@@ -17,17 +17,37 @@ function serialize_work(array $row): array
         'description' => $row['description'],
         'imageUrl' => $row['image_url'] ?: null,
         'sortOrder' => (int) $row['sort_order'],
+        'isHidden' => (bool) ($row['is_hidden'] ?? false),
     ];
 }
 
-function serialize_settings(array $row): array
+/** Public-facing subset — never include order_notification_email/order_sender_email here, they're operational contact details, not storefront content. */
+function serialize_settings_public(array $row): array
 {
     return [
         'heroTitle' => $row['hero_title'],
         'heroSub' => $row['hero_sub'],
+        'heroEyebrow' => $row['hero_eyebrow'],
+        'heroImageAUrl' => $row['hero_image_a_url'] ?: null,
+        'heroImageBUrl' => $row['hero_image_b_url'] ?: null,
+        'worksEyebrow' => $row['works_eyebrow'],
+        'worksTitle' => $row['works_title'],
+        'worksCountLabel' => $row['works_count_label'],
         'aboutTitle' => $row['about_title'],
         'aboutText' => $row['about_text'],
+        'aboutEyebrow' => $row['about_eyebrow'],
+        'aboutImageUrl' => $row['about_image_url'] ?: null,
         'logoUrl' => $row['logo_url'] ?: null,
+    ];
+}
+
+/** Admin view — everything from the public subset plus operational settings. */
+function serialize_settings(array $row): array
+{
+    return serialize_settings_public($row) + [
+        'orderNotificationEmail' => $row['order_notification_email'] ?: null,
+        'orderSenderName' => $row['order_sender_name'] ?: null,
+        'orderSenderEmail' => $row['order_sender_email'] ?: null,
     ];
 }
 
@@ -48,6 +68,7 @@ function serialize_order(array $row, array $items): array
         'currency' => $row['currency'],
         'createdAt' => $row['created_at'],
         'paidAt' => $row['paid_at'],
+        'fulfilledAt' => $row['fulfilled_at'] ?? null,
         'items' => array_map(static fn (array $i) => [
             'workId' => (int) $i['work_id'],
             'title' => $i['title'],
@@ -76,6 +97,7 @@ function work_record_from_request(array $body): array
         'status' => $status,
         'description' => trim((string) ($body['description'] ?? '')),
         'image_url' => $body['imageUrl'] ?? null,
+        'is_hidden' => !empty($body['isHidden']) ? 1 : 0,
     ];
 }
 

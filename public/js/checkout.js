@@ -76,14 +76,16 @@ function renderPaymentOptions() {
   const cfg = checkoutState.config;
   const container = document.getElementById('payment-options');
   container.innerHTML = [
-    paymentOptionHtml('stripe', 'Kredit-/Debitkarte', 'Visa · Mastercard · Apple&nbsp;Pay · Google&nbsp;Pay', 'STRIPE', cfg.stripe.enabled),
-    paymentOptionHtml('paypal', 'PayPal', 'Weiterleitung zu PayPal beim Bezahlen', 'PAYPAL', cfg.paypal.enabled),
     paymentOptionHtml('invoice', 'Rechnung / Überweisung', 'Versand nach Zahlungseingang', 'SEPA', cfg.invoice.enabled),
+    paymentOptionHtml('stripe', 'Kredit-/Debitkarte', 'Visa · Mastercard · Apple&nbsp;Pay · Google&nbsp;Pay', 'STRIPE', cfg.stripe.enabled),
   ].join('');
+  // PayPal is temporarily hidden from checkout (business decision, not a removal) —
+  // mountPaypalButtons()/paypal-capture.php etc. are left intact so it can be
+  // re-added to this list later without any backend changes.
   container.querySelectorAll('[data-method]').forEach((el) => {
     el.addEventListener('click', () => {
       const method = el.dataset.method;
-      const enabledMap = { stripe: cfg.stripe.enabled, paypal: cfg.paypal.enabled, invoice: cfg.invoice.enabled };
+      const enabledMap = { stripe: cfg.stripe.enabled, invoice: cfg.invoice.enabled };
       if (!enabledMap[method]) return;
       selectMethod(method);
     });
@@ -236,7 +238,7 @@ async function initCheckout() {
   renderSummary();
   renderPaymentOptions();
 
-  const firstEnabled = ['stripe', 'paypal', 'invoice'].find((m) => config[m].enabled);
+  const firstEnabled = ['invoice', 'stripe'].find((m) => config[m].enabled);
   if (firstEnabled) await selectMethod(firstEnabled);
 
   document.getElementById('checkout-form').addEventListener('submit', handleSubmit);

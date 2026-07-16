@@ -28,7 +28,23 @@ async function initConfirm() {
     return;
   }
   try {
-    const [order, config] = await Promise.all([api.order(orderNumber), api.config()]);
+    let [order, config] = await Promise.all([api.order(orderNumber), api.config()]);
+
+    // Redirect-based Stripe methods (Klarna, Bancontact, EPS, ...) land here straight
+    // from the payment provider, before any webhook has necessarily arrived — Stripe
+    // appends payment_intent to the return_url on the way back, so this re-checks the
+    // status directly instead of only waiting on the webhook (which occasionally gets
+    // blocked by the host's security layer). Idempotent and safe to call redundantly.
+    const paymentIntentId = params.get('payment_intent');
+    if (order.status === 'pending' && order.paymentMethod === 'stripe' && paymentIntentId) {
+      try {
+        await api.checkoutStripeSync(paymentIntentId);
+        order = await api.order(orderNumber);
+      } catch (e) {
+        // Falls back to showing the pending state below — the webhook may still land.
+      }
+    }
+
     root.innerHTML = confirmHtml(order, config.invoice);
   } catch (e) {
     root.innerHTML = '<p class="center-note">Bestellung wurde nicht gefunden.</p>';

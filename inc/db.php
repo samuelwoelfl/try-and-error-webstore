@@ -26,9 +26,65 @@ function get_db(): PDO
         migrate_db($pdo);
         seed_db($pdo);
         @file_put_contents($marker, date('c'));
+    } else {
+        // Adds columns introduced after the site was first installed — CREATE TABLE
+        // IF NOT EXISTS above is a no-op once the table already exists, so new
+        // columns need this separate, always-run, idempotent check.
+        migrate_settings_columns($pdo);
+        migrate_orders_columns($pdo);
+        migrate_works_columns($pdo);
     }
 
     return $pdo;
+}
+
+function migrate_works_columns(PDO $pdo): void
+{
+    $existing = $pdo->query('SHOW COLUMNS FROM works')->fetchAll(PDO::FETCH_COLUMN);
+    $columns = [
+        'is_hidden' => 'TINYINT(1) NOT NULL DEFAULT 0',
+    ];
+    foreach ($columns as $name => $definition) {
+        if (!in_array($name, $existing, true)) {
+            $pdo->exec("ALTER TABLE works ADD COLUMN $name $definition");
+        }
+    }
+}
+
+function migrate_orders_columns(PDO $pdo): void
+{
+    $existing = $pdo->query('SHOW COLUMNS FROM orders')->fetchAll(PDO::FETCH_COLUMN);
+    $columns = [
+        'fulfilled_at' => 'DATETIME DEFAULT NULL',
+    ];
+    foreach ($columns as $name => $definition) {
+        if (!in_array($name, $existing, true)) {
+            $pdo->exec("ALTER TABLE orders ADD COLUMN $name $definition");
+        }
+    }
+}
+
+function migrate_settings_columns(PDO $pdo): void
+{
+    $existing = $pdo->query('SHOW COLUMNS FROM settings')->fetchAll(PDO::FETCH_COLUMN);
+    $columns = [
+        'hero_eyebrow' => "VARCHAR(255) NOT NULL DEFAULT ''",
+        'hero_image_a_url' => 'VARCHAR(500) DEFAULT NULL',
+        'hero_image_b_url' => 'VARCHAR(500) DEFAULT NULL',
+        'works_eyebrow' => "VARCHAR(255) NOT NULL DEFAULT ''",
+        'works_title' => "VARCHAR(255) NOT NULL DEFAULT ''",
+        'works_count_label' => "VARCHAR(100) NOT NULL DEFAULT ''",
+        'about_eyebrow' => "VARCHAR(255) NOT NULL DEFAULT ''",
+        'about_image_url' => 'VARCHAR(500) DEFAULT NULL',
+        'order_notification_email' => 'VARCHAR(255) DEFAULT NULL',
+        'order_sender_name' => 'VARCHAR(255) DEFAULT NULL',
+        'order_sender_email' => 'VARCHAR(255) DEFAULT NULL',
+    ];
+    foreach ($columns as $name => $definition) {
+        if (!in_array($name, $existing, true)) {
+            $pdo->exec("ALTER TABLE settings ADD COLUMN $name $definition");
+        }
+    }
 }
 
 function migrate_db(PDO $pdo): void
@@ -48,6 +104,7 @@ function migrate_db(PDO $pdo): void
             description TEXT NOT NULL,
             image_url VARCHAR(500) DEFAULT NULL,
             sort_order INT NOT NULL DEFAULT 0,
+            is_hidden TINYINT(1) NOT NULL DEFAULT 0,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
@@ -57,11 +114,23 @@ function migrate_db(PDO $pdo): void
             id INT PRIMARY KEY,
             hero_title VARCHAR(500) NOT NULL DEFAULT '',
             hero_sub TEXT NOT NULL,
+            hero_eyebrow VARCHAR(255) NOT NULL DEFAULT '',
+            hero_image_a_url VARCHAR(500) DEFAULT NULL,
+            hero_image_b_url VARCHAR(500) DEFAULT NULL,
+            works_eyebrow VARCHAR(255) NOT NULL DEFAULT '',
+            works_title VARCHAR(255) NOT NULL DEFAULT '',
+            works_count_label VARCHAR(100) NOT NULL DEFAULT '',
             about_title VARCHAR(500) NOT NULL DEFAULT '',
             about_text TEXT NOT NULL,
-            logo_url VARCHAR(500) DEFAULT NULL
+            about_eyebrow VARCHAR(255) NOT NULL DEFAULT '',
+            about_image_url VARCHAR(500) DEFAULT NULL,
+            logo_url VARCHAR(500) DEFAULT NULL,
+            order_notification_email VARCHAR(255) DEFAULT NULL,
+            order_sender_name VARCHAR(255) DEFAULT NULL,
+            order_sender_email VARCHAR(255) DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
+    migrate_settings_columns($pdo);
 
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS admin_users (
@@ -88,7 +157,8 @@ function migrate_db(PDO $pdo): void
             stripe_payment_intent_id VARCHAR(255) DEFAULT NULL,
             paypal_order_id VARCHAR(255) DEFAULT NULL,
             created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            paid_at DATETIME DEFAULT NULL
+            paid_at DATETIME DEFAULT NULL,
+            fulfilled_at DATETIME DEFAULT NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
@@ -132,13 +202,25 @@ function seed_db(PDO $pdo): void
 
     if ((int) $pdo->query('SELECT COUNT(*) FROM settings')->fetchColumn() === 0) {
         $pdo->prepare("
-            INSERT INTO settings (id, hero_title, hero_sub, about_title, about_text, logo_url)
-            VALUES (1, :hero_title, :hero_sub, :about_title, :about_text, NULL)
+            INSERT INTO settings (
+                id, hero_title, hero_sub, hero_eyebrow, works_eyebrow, works_title, works_count_label,
+                about_title, about_text, about_eyebrow, logo_url, order_notification_email
+            )
+            VALUES (
+                1, :hero_title, :hero_sub, :hero_eyebrow, :works_eyebrow, :works_title, :works_count_label,
+                :about_title, :about_text, :about_eyebrow, NULL, :order_notification_email
+            )
         ")->execute([
             'hero_title' => 'Malerei aus dem Atelier.',
             'hero_sub' => 'Handgemalte Unikate und limitierte Editionen — direkt aus dem Studio zu dir nach Hause. Jedes Werk erzählt eine eigene, stille Geschichte.',
+            'hero_eyebrow' => 'Originale & Editionen',
+            'works_eyebrow' => 'Die Sammlung',
+            'works_title' => 'Alle Werke',
+            'works_count_label' => 'Arbeiten',
             'about_title' => 'Try & Error',
             'about_text' => "Try & Error ist ein offenes Atelier-Projekt aus Stuttgart.\n\nHier entstehen handgemalte Unikate und kleine Editionen — meist in Öl und Acryl, manchmal in Aquarell. Das Projekt kreist um Licht, Landschaft und stille Momente und versteht das Ausprobieren als festen Teil der Arbeit.\n\nJedes Original ist ein Unikat und wird sorgfältig verpackt versendet. Editionen entstehen als kleine, limitierte Auflagen. Bei Fragen zu einem Werk schreib uns gern.",
+            'about_eyebrow' => 'Über das Projekt',
+            'order_notification_email' => env('ADMIN_EMAIL', 'admin@atelier.de'),
         ]);
     }
 

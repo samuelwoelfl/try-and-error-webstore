@@ -51,7 +51,7 @@ function finalize_order_paid(PDO $pdo, int $orderId): ?array
         'unitPriceCents' => (int) $i['unit_price_cents'],
         'qty' => (int) $i['qty'],
     ], $items);
-    $email = build_order_confirmation_email([
+    $orderForEmail = [
         'orderNumber' => $updated['order_number'],
         'firstName' => $updated['first_name'],
         'lastName' => $updated['last_name'],
@@ -62,8 +62,29 @@ function finalize_order_paid(PDO $pdo, int $orderId): ?array
         'totalCents' => (int) $updated['total_cents'],
         'paymentMethod' => $updated['payment_method'],
         'status' => $updated['status'],
-    ], $emailItems);
-    send_mail($updated['email'], $email['subject'], $email['text'], $email['html']);
+    ];
+
+    // The order is already committed as paid at this point — a mail hiccup (bad
+    // settings row, mail() rejecting the sender domain, etc.) must never bubble up
+    // as an exception here. If it did, Stripe/PayPal would see a failed webhook and
+    // retry; finalize_order_paid() would then hit the idempotent early-return above
+    // on that retry and never even attempt to send mail again, silently losing both
+    // emails for good.
+    try {
+        $settings = $pdo->query('SELECT order_sender_name, order_sender_email, order_notification_email FROM settings WHERE id = 1')->fetch();
+        $senderFrom = build_mail_from($settings['order_sender_name'] ?? null, $settings['order_sender_email'] ?? null);
+
+        $email = build_order_confirmation_email($orderForEmail, $emailItems);
+        send_mail($updated['email'], $email['subject'], $email['text'], $email['html'], $senderFrom);
+
+        $notifyTo = $settings['order_notification_email'] ?: env('ADMIN_EMAIL');
+        if ($notifyTo) {
+            $notification = build_order_notification_email($orderForEmail, $emailItems);
+            send_mail($notifyTo, $notification['subject'], $notification['text'], $notification['html'], $senderFrom);
+        }
+    } catch (Throwable $e) {
+        error_log("[finalize_order] Mailversand für Bestellung {$updated['order_number']} fehlgeschlagen: " . $e->getMessage());
+    }
 
     return $updated;
 }

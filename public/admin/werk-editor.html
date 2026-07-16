@@ -20,6 +20,7 @@
     </div>
     <nav class="admin-nav">
       <a href="/admin/werke.html" class="admin-nav__link is-active"><span>◇</span>Werke</a>
+      <a href="/admin/bestellungen.html" class="admin-nav__link"><span>⚑</span>Bestellungen</a>
       <a href="/admin/inhalte.html" class="admin-nav__link"><span>✎</span>Inhalte</a>
     </nav>
     <div class="admin-sidebar__footer">
@@ -29,7 +30,7 @@
   </aside>
 
   <div class="admin-content">
-    <div id="admin-flash" class="admin-flash" hidden>✓ Änderungen gespeichert</div>
+    <div id="admin-flash" class="admin-flash">✓ Änderungen gespeichert</div>
     <div id="admin-error" class="admin-error-banner" hidden></div>
 
     <div class="admin-page admin-page--narrow view-enter">
@@ -73,6 +74,11 @@
             <label class="field"><span class="field__label">Preis (€)</span><input class="field__input" name="priceEuro" type="number" step="0.01" placeholder="1450"></label>
 
             <label class="field field--full"><span class="field__label">Beschreibung</span><textarea class="field__input" name="description" rows="4" placeholder="Ein paar Worte zum Werk …"></textarea></label>
+
+            <label class="field field--full" style="display:flex;align-items:center;gap:10px">
+              <input type="checkbox" name="isHidden" style="width:auto;margin:0">
+              <span class="field__label" style="margin:0">Werk auf der Seite ausblenden</span>
+            </label>
           </div>
         </div>
 

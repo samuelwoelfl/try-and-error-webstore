@@ -11,15 +11,21 @@ while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
 }
 require_once $__bootstrapDir . '/inc/bootstrap.php';
 
-$id = require_query('id');
-$stmt = get_db()->prepare('SELECT * FROM works WHERE id = :id');
-$stmt->execute(['id' => $id]);
-$row = $stmt->fetch();
+require_admin();
+require_method('PATCH');
 
-// Hidden works stay reachable by the admin editor (same endpoint) but 404 for
-// everyone else, so a direct link can't be used to bypass hiding a work from sale.
-if (!$row || (!empty($row['is_hidden']) && !is_admin())) {
+$id = require_query('id');
+$pdo = get_db();
+
+$stmt = $pdo->prepare('SELECT * FROM works WHERE id = :id');
+$stmt->execute(['id' => $id]);
+$existing = $stmt->fetch();
+if (!$existing) {
     json_error('Werk nicht gefunden.', 404);
 }
 
-json_response(serialize_work($row));
+$next = $existing['is_hidden'] ? 0 : 1;
+$pdo->prepare('UPDATE works SET is_hidden = :is_hidden WHERE id = :id')->execute(['is_hidden' => $next, 'id' => $id]);
+
+$stmt->execute(['id' => $id]);
+json_response(serialize_work($stmt->fetch()));

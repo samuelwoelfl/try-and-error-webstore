@@ -47,7 +47,13 @@ if (($event['type'] ?? null) === 'payment_intent.succeeded') {
         $stmt->execute(['pi' => $intentId]);
         $order = $stmt->fetch();
         if ($order) {
-            finalize_order_paid($pdo, (int) $order['id']);
+            try {
+                finalize_order_paid($pdo, (int) $order['id']);
+            } catch (Throwable $e) {
+                error_log('[webhook/stripe] finalize_order_paid fehlgeschlagen für Order ' . $order['id'] . ': ' . $e->getMessage());
+                http_response_code(500);
+                exit;
+            }
         }
     }
 }

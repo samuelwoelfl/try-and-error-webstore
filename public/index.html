@@ -22,8 +22,8 @@
       <a href="/#werke" class="site-nav__link">Werke</a>
       <a href="/kontakt.html" class="site-nav__link">Kontakt</a>
       <a href="/warenkorb.html" class="cart-btn">
-        <span style="font-size:15px;line-height:1">◇</span>
-        Warenkorb
+        <svg class="cart-btn__icon" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 2.5h2l.6 3M5.1 5.5l1.2 7.2a1.5 1.5 0 0 0 1.5 1.3h6.8a1.5 1.5 0 0 0 1.5-1.2l1-5.3a1 1 0 0 0-1-1.2H5.1z"/><circle cx="8.5" cy="16.5" r="1.1"/><circle cx="14.5" cy="16.5" r="1.1"/></svg>
+        <span class="cart-btn__label">Warenkorb</span>
         <span class="badge-cart" data-cart-badge hidden></span>
       </a>
     </nav>
@@ -36,7 +36,7 @@
     <div>
       <div class="hero__kicker">
         <span class="hero__kicker-line"></span>
-        <span class="eyebrow">Originale &amp; Editionen</span>
+        <span class="eyebrow" id="hero-eyebrow">Originale &amp; Editionen</span>
       </div>
       <h1 class="heading hero__title" id="hero-title">Malerei aus<br>dem Atelier.</h1>
       <p class="hero__sub" id="hero-sub">Handgemalte Unikate und limitierte Editionen — direkt aus dem Studio zu dir nach Hause. Jedes Werk erzählt eine eigene, stille Geschichte.</p>
@@ -46,16 +46,16 @@
       </div>
     </div>
     <div class="hero__images">
-      <div class="arch-img hero__img-a"><img src="/img/hero-a.svg" alt="Kunstobjekt"></div>
-      <div class="arch-img hero__img-b"><img src="/img/hero-b.svg" alt="Portrait"></div>
+      <div class="arch-img hero__img-a"><img id="hero-img-a" src="/img/hero-a.svg" alt="Kunstobjekt"></div>
+      <div class="arch-img hero__img-b"><img id="hero-img-b" src="/img/hero-b.svg" alt="Portrait"></div>
     </div>
   </section>
 
   <section id="werke" class="container works-section">
     <div class="section-head">
       <div>
-        <div class="eyebrow" style="margin-bottom:10px">Die Sammlung</div>
-        <h2 class="heading">Alle Werke</h2>
+        <div class="eyebrow" style="margin-bottom:10px" id="works-eyebrow">Die Sammlung</div>
+        <h2 class="heading" id="works-title">Alle Werke</h2>
       </div>
       <span class="section-head__count" id="work-count">— Arbeiten</span>
     </div>
@@ -66,11 +66,11 @@
 
   <section class="about-strip">
     <div class="container about-strip__inner">
-      <div class="arch-img about-strip__portrait stripe-placeholder">
+      <div class="arch-img about-strip__portrait stripe-placeholder" id="about-portrait">
         <span class="stripe-placeholder__label">Portrait</span>
       </div>
       <div>
-        <div class="eyebrow" style="margin-bottom:16px">Über das Projekt</div>
+        <div class="eyebrow" style="margin-bottom:16px" id="about-eyebrow">Über das Projekt</div>
         <h2 class="heading about-strip__title" id="about-title">Try &amp; Error</h2>
         <div id="about-text">
           <p class="about-strip__text">Try &amp; Error ist ein offenes Atelier-Projekt aus Stuttgart.</p>
@@ -94,7 +94,6 @@
           <a href="/kontakt.html">Kontakt</a>
         </div>
         <div class="site-footer__col">
-          <a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a>
           <a href="/impressum.html">Impressum</a>
           <a href="/datenschutz.html">Datenschutz</a>
         </div>

@@ -11,5 +11,17 @@ while (!is_file($__bootstrapDir . '/inc/bootstrap.php')) {
 }
 require_once $__bootstrapDir . '/inc/bootstrap.php';
 
-$rows = get_db()->query("SELECT * FROM works WHERE is_hidden = 0 ORDER BY sort_order ASC, id ASC")->fetchAll();
-json_response(array_map('serialize_work', $rows));
+require_admin();
+require_method('GET');
+$pdo = get_db();
+
+$orders = $pdo->query('SELECT * FROM orders ORDER BY created_at DESC')->fetchAll();
+$itemsStmt = $pdo->prepare('SELECT * FROM order_items WHERE order_id = :id');
+
+$result = [];
+foreach ($orders as $order) {
+    $itemsStmt->execute(['id' => $order['id']]);
+    $result[] = serialize_order($order, $itemsStmt->fetchAll());
+}
+
+json_response($result);
