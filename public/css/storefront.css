@@ -61,13 +61,15 @@
 }
 .about-strip__portrait {
   aspect-ratio: 4 / 5; border-radius: 160px 160px 0 0;
-  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px;
   overflow: hidden;
 }
-.about-strip__portrait img { width: 100%; height: 100%; object-fit: cover; }
+.about-strip__portrait.stripe-placeholder {
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 18px;
+}
+.about-strip__portrait img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .about-strip__title { font-size: clamp(26px, 3.2vw, 40px); margin: 0 0 22px; line-height: 1.1; }
 .about-strip__text { max-width: 560px; font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin: 0 0 16px; white-space: pre-line; }
-@media (max-width: 760px) { .hero, .about-strip__inner { grid-template-columns: 1fr; } .about-strip__portrait { max-width: 320px; } }
+@media (max-width: 760px) { .hero, .about-strip__inner { grid-template-columns: 1fr; } .about-strip__portrait { width: 100%; max-width: none; } }
 
 /* ---------- Detail ---------- */
 .detail-grid {

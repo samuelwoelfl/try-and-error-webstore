@@ -1,6 +1,7 @@
 function workCardHtml(w) {
+  const altText = w.description ? `${w.title} – ${w.description}` : w.title;
   const img = w.imageUrl
-    ? `<img src="${escapeHtml(w.imageUrl)}" alt="${escapeHtml(w.title)}" style="width:100%;height:100%;object-fit:cover">`
+    ? `<img src="${escapeHtml(w.imageUrl)}" alt="${escapeHtml(altText)}" style="width:100%;height:100%;object-fit:cover">`
     : `<div class="stripe-placeholder" style="position:absolute;inset:0"><span class="stripe-placeholder__label">Werkabbildung</span></div>`;
   const soldOverlay = w.status === 'verkauft'
     ? `<div class="sold-overlay"><span>Verkauft</span></div>` : '';

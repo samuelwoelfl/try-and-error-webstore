@@ -8,3 +8,7 @@
 Options -Indexes
 
 AddDefaultCharset utf-8
+
+# Serve the dynamically generated sitemap at the conventional /sitemap.xml URL.
+RewriteEngine On
+RewriteRule ^sitemap\.xml$ sitemap.php [L]

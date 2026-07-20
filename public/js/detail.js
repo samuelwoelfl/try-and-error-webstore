@@ -1,6 +1,7 @@
 function detailHtml(w) {
+  const altText = w.description ? `${w.title} – ${w.description}` : w.title;
   const img = w.imageUrl
-    ? `<img src="${escapeHtml(w.imageUrl)}" alt="${escapeHtml(w.title)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
+    ? `<img src="${escapeHtml(w.imageUrl)}" alt="${escapeHtml(altText)}" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">`
     : `<span class="stripe-placeholder__label">Werkabbildung</span>`;
   const soldOverlay = w.status === 'verkauft' ? `<div class="sold-overlay"><span>Verkauft</span></div>` : '';
   const editionLine = w.kind === 'edition'
@@ -39,6 +40,43 @@ function detailHtml(w) {
     </div>`;
 }
 
+function updateHeadForWork(w) {
+  const url = `https://try-and-error.art/werk.html?id=${w.id}`;
+  const description = w.description || `${w.title} — Try & Error`;
+
+  document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+  document.getElementById('canonical-link')?.setAttribute('href', url);
+  document.getElementById('og-title')?.setAttribute('content', `${w.title} — Try & Error`);
+  document.getElementById('og-description')?.setAttribute('content', description);
+  document.getElementById('og-url')?.setAttribute('content', url);
+
+  const ld = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: w.title,
+    description: w.description || undefined,
+    image: w.imageUrl || undefined,
+    url,
+    offers: {
+      '@type': 'Offer',
+      priceCurrency: 'EUR',
+      price: (w.priceCents / 100).toFixed(2),
+      availability: w.status === 'verkauft'
+        ? 'https://schema.org/SoldOut'
+        : 'https://schema.org/InStock',
+      url,
+    },
+  };
+  let script = document.getElementById('ld-product');
+  if (!script) {
+    script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'ld-product';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(ld);
+}
+
 function updateInCartNote(work) {
   const note = document.getElementById('incart-note');
   if (!note) return;
@@ -69,6 +107,7 @@ async function initDetail() {
   }
 
   document.title = `${work.title} — Try & Error`;
+  updateHeadForWork(work);
   root.innerHTML = detailHtml(work);
 
   const maxQty = work.kind === 'unique' ? 1 : 99;
